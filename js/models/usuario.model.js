@@ -17,21 +17,12 @@ const mockUsuarios = [
   }
 ];
 
-/**
- * Devuelve los usuarios almacenados.
- * Si no hay, carga los mocks por primera vez.
- * @returns {Array}
- */
 export function obtenerUsuarios() {
-  const almacenados = JSON.parse(localStorage.getItem(CLAVE_USUARIOS));
+  return JSON.parse(localStorage.getItem(CLAVE_USUARIOS)) || [];
+}
 
-  if (almacenados && almacenados.length > 0) {
-    return almacenados;
-  } else {
-    // Guarda los mocks y los devuelve
-    localStorage.setItem(CLAVE_USUARIOS, JSON.stringify(mockUsuarios));
-    return mockUsuarios;
-  }
+export function cargarUsuariosMock() {
+  localStorage.setItem(CLAVE_USUARIOS, JSON.stringify(mockUsuarios));
 }
 
 /**

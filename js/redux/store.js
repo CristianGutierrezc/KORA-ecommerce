@@ -2,8 +2,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import carritoReducer from './carrito.slice.js';
 
-export const store = configureStore({
+const store = configureStore({
   reducer: {
     carrito: carritoReducer
   }
 });
+
+export default store;

@@ -1,8 +1,8 @@
 import store from '../redux/store.js';
 import {
   agregarAlCarrito,
-  eliminarDelCarrito
-   vaciarCarrito 
+  eliminarDelCarrito,
+  vaciarCarrito
 } from '../redux/carrito.slice.js';
 import { obtenerProductos } from '../utils/fnStorages.js';
 
@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartCount = document.getElementById('cart-count');
   const carritoContenido = document.getElementById('carrito-contenido');
   const totalFinal = document.getElementById('total-final');
+  const btnFinalizar = document.getElementById('finalizar-compra');
 
-  // 🎯 Agregar producto al carrito
   document.addEventListener('click', (e) => {
     if (e.target.classList.contains('btn-agregar')) {
       const id = e.target.dataset.id;
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         store.dispatch(agregarAlCarrito(producto));
         renderMiniCarrito();
         actualizarContador();
-        renderPaginaCarrito(); // por si estamos en carrito.html
+        renderPaginaCarrito();
       }
     }
 
@@ -36,19 +36,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 🎯 Mostrar/ocultar mini carrito
   cartIcon?.addEventListener('click', () => {
     miniCart?.classList.toggle('visible');
   });
 
-  // ✅ Actualizar contador de carrito
   function actualizarContador() {
     const carrito = store.getState().carrito.items;
     const total = carrito.reduce((acc, item) => acc + item.cantidad, 0);
     cartCount.textContent = total;
   }
 
-  // ✅ Render mini carrito
   function renderMiniCarrito() {
     const carrito = store.getState().carrito.items;
     miniCart.innerHTML = '<h4>Carrito</h4>';
@@ -72,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
     miniCart.innerHTML += `<a href="pages/carrito.html" class="btn-ver-carrito">Ver carrito completo</a>`;
   }
 
-  // ✅ Render página carrito.html si estamos ahí
   function renderPaginaCarrito() {
     if (!carritoContenido || !totalFinal) return;
 
@@ -104,24 +100,21 @@ document.addEventListener('DOMContentLoaded', () => {
     totalFinal.textContent = total.toFixed(2) + ' €';
   }
 
-  // 🟢 Inicialización
+  btnFinalizar?.addEventListener('click', () => {
+    if (confirm('¿Deseas finalizar la compra?')) {
+      store.dispatch(vaciarCarrito());
+      alert('Gracias por tu compra. Carrito vaciado.');
+      renderMiniCarrito();
+      renderPaginaCarrito();
+      actualizarContador();
+    }
+  });
+
   renderMiniCarrito();
   actualizarContador();
   renderPaginaCarrito();
 });
-  // 🎯 Finalizar compra
-  const btnFinalizar = document.getElementById('finalizar-compra');
-  if (btnFinalizar) {
-    btnFinalizar.addEventListener('click', () => {
-      if (confirm('¿Deseas finalizar la compra?')) {
-        store.dispatch(limpiarCarrito());
-        alert('Gracias por tu compra. Carrito vaciado.');
-        renderMiniCarrito();
-        renderPaginaCarrito();
-        actualizarContador();
-      }
-    });
-  }
+
 export function calcularTotal(carrito) {
   return carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
 }

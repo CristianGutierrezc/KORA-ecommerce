@@ -105,18 +105,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ☰ Abrir/Cerrar menú lateral en móviles
-document.getElementById("hamburguesa").addEventListener("click", () => {
-  document.getElementById("menu-lateral").classList.toggle("activo");
-  document.getElementById("fondo-oscuro").classList.toggle("visible");
-});
+  document.getElementById("hamburguesa")?.addEventListener("click", () => {
+    document.getElementById("menu-lateral")?.classList.toggle("activo");
+    document.getElementById("fondo-oscuro")?.classList.toggle("visible");
+  });
 
-document.getElementById("fondo-oscuro").addEventListener("click", () => {
-  document.getElementById("menu-lateral").classList.remove("activo");
-  document.getElementById("fondo-oscuro").classList.remove("visible");
-});
-// Aplica modo oscuro automáticamente si está activado por cookie
-document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("fondo-oscuro")?.addEventListener("click", () => {
+    document.getElementById("menu-lateral")?.classList.remove("activo");
+    document.getElementById("fondo-oscuro")?.classList.remove("visible");
+  });
+
+  // Aplica modo oscuro automáticamente si está activado por cookie
   if (document.cookie.includes("modo=oscuro")) {
     document.body.classList.add("modo-oscuro");
   }
-});

@@ -10,13 +10,14 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.9.7"
+  },
   "devDependencies": {
     "jest": "^29.7.0"
   },
   "jest": {
-    "testEnvironment": "jsdom"
+    "testEnvironment": "node",
+    "setupFiles": ["./jest.setup.js"]
   }
-}
-"scripts": {
-  "test": "jest"
 }
