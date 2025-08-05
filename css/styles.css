@@ -1,0 +1,822 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+/* VARIABLES */
+:root {
+  --blanco: #ffffff;
+  --negro: #111111;
+  --gris: #444444;
+  --acento: #00fff0;
+  --gris-claro: #f2f2f2;
+  --borde: #cccccc;
+}
+
+/* GENERALES */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--blanco);
+  color: var(--negro);
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+}
+
+/* MAIN corregido */
+main {
+  padding-top: 30px; /* aumenta el espacio superior para escritorio */
+  padding-bottom: 2rem;
+}
+#form-producto {
+  margin-top: 1rem;
+}
+
+/* NAVBAR */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to bottom, rgba(17,17,17,0.85), rgba(17,17,17,0.4));
+  color: var(--blanco);
+  z-index: 1000;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(6px);
+}
+
+.logo-img {
+  height: 80px;
+  object-fit: contain;
+  display: block;
+}
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 1.2rem;
+}
+.nav-links li a {
+  text-decoration: none;
+  color: var(--blanco);
+  transition: color 0.3s;
+}
+.nav-links li a:hover {
+  color: var(--acento);
+}
+
+.icons {
+  display: flex;
+  gap: 1rem;
+  font-size: 1.3rem;
+  cursor: pointer;
+  position: relative;
+}
+.cart-badge {
+  background: var(--acento);
+  color: var(--negro);
+  border-radius: 50%;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+}
+
+/* BANNER */
+.banner {
+  width: 100%;
+  height: 60vh;
+  overflow: hidden;
+  position: relative;
+}
+.banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 20%;
+  display: block;
+}
+
+/* BUSQUEDA + FILTROS */
+.busqueda-input {
+  padding: 0.7rem 1.2rem;
+  width: 250px;
+  border: 1px solid var(--gris);
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  outline: none;
+}
+
+.busqueda-input:focus {
+  border-color: var(--acento);
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(0, 255, 240, 0.3);
+}
+
+.busqueda-input::placeholder {
+  color: #888;
+  font-style: italic;
+  transition: color 0.3s ease;
+}
+
+.busqueda-input:focus::placeholder {
+  color: transparent;
+}
+
+body.modo-oscuro .busqueda-input {
+  background-color: #1f1f1f;
+  color: var(--blanco);
+  border: 1px solid #444;
+}
+
+body.modo-oscuro .busqueda-input:focus {
+  background-color: #000;
+  border-color: var(--acento);
+  box-shadow: 0 0 0 3px rgba(0, 255, 240, 0.4);
+}
+
+select, button#vista-toggle, button, .btn-agregar, .btn-ver-carrito, .btn-eliminar, .btn-editar, .btn-publicar {
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  border: 2px solid var(--negro);
+  background-color: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--negro);
+}
+
+select:hover, button#vista-toggle:hover, button:hover, .btn-agregar:hover, .btn-ver-carrito:hover, .btn-eliminar:hover, .btn-editar:hover, .btn-publicar:hover {
+  background-color: var(--acento);
+  color: var(--negro);
+  border-color: var(--acento);
+}
+
+body.modo-oscuro select,
+body.modo-oscuro button#vista-toggle,
+body.modo-oscuro button,
+body.modo-oscuro .btn-agregar,
+body.modo-oscuro .btn-ver-carrito,
+body.modo-oscuro .btn-eliminar,
+body.modo-oscuro .btn-editar,
+body.modo-oscuro .btn-publicar {
+  background-color: transparent;
+  color: var(--blanco);
+  border-color: var(--blanco);
+}
+
+body.modo-oscuro select:hover,
+body.modo-oscuro button#vista-toggle:hover,
+body.modo-oscuro button:hover,
+body.modo-oscuro .btn-agregar:hover,
+body.modo-oscuro .btn-ver-carrito:hover,
+body.modo-oscuro .btn-eliminar:hover,
+body.modo-oscuro .btn-editar:hover,
+body.modo-oscuro .btn-publicar:hover {
+  background-color: var(--acento);
+  color: var(--negro);
+  border-color: var(--acento);
+}
+
+/* GRID DE PRODUCTOS */
+.grid-productos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+.producto-card {
+  border: 1px solid var(--borde);
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.producto-card p {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;              /* Limita a 2 líneas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+  font-size: 0.95rem;
+  margin: 0.5rem 0;
+  color: inherit;
+  max-width: 100%;    
+}
+
+.producto-card:hover {
+  transform: scale(1.01);
+}
+.producto-img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
+}
+
+/* MINI CARRITO */
+.mini-cart {
+  position: fixed;
+  top: 90px;
+  right: 20px;
+  width: 320px;
+  max-height: 400px;
+  background-color: var(--blanco);
+  color: var(--negro);
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  display: none;
+  z-index: 2000;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+.mini-cart.visible {
+  display: block;
+}
+
+.item-carrito {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.btn-ver-carrito {
+  margin-top: 1rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  border: 2px solid var(--negro);
+  background-color: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--negro);
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+
+.btn-ver-carrito:hover {
+  background-color: var(--acento);
+  color: var(--negro);
+  border-color: var(--acento);
+}
+
+/* Modo oscuro para carrito */
+body.modo-oscuro .mini-cart {
+  background-color: #1a1a1a;
+  color: var(--blanco);
+  border-color: #444;
+}
+
+body.modo-oscuro .item-carrito {
+  border-bottom: 1px solid #333;
+}
+
+body.modo-oscuro .btn-ver-carrito {
+  color: var(--blanco);
+  border-color: var(--blanco);
+}
+
+body.modo-oscuro .btn-ver-carrito:hover {
+  background-color: var(--acento);
+  color: var(--negro);
+  border-color: var(--acento);
+}
+
+/* 📱 MÓVILES */
+@media (max-width: 480px) {
+  .mini-cart {
+    width: 95%;
+    right: 2.5%;
+    top: 100px;
+    font-size: 0.9rem;
+    padding: 0.8rem;
+  }
+}
+
+/* VISTA LISTA */
+.vista-lista {
+  display: flex !important;
+  flex-direction: column;
+}
+.vista-lista .producto-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+}
+.vista-lista .producto-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+/* MODO OSCURO */
+body.modo-oscuro {
+  background-color: #111;
+  color: #eee;
+}
+body.modo-oscuro .navbar,
+body.modo-oscuro footer {
+  background-color: #000;
+  color: #fff;
+}
+body.modo-oscuro .producto-card {
+  background-color: #222;
+  color: #fff;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: var(--negro);
+  color: var(--blanco);
+  font-size: 0.9rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .nav-links {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .busqueda-wrapper {
+    flex-direction: column;
+  }
+}
+/* ======== HAMBURGER MENU ======== */
+.menu-toggle {
+  display: none;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: var(--blanco);
+  cursor: pointer;
+  z-index: 2001;
+}
+
+.menu-mobile {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 80%;
+  height: 100%;
+  background-color: var(--negro);
+  color: var(--blanco);
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transition: left 0.3s ease-in-out;
+  z-index: 2000;
+}
+
+.menu-mobile.active {
+  left: 0;
+}
+
+.menu-mobile a {
+  color: var(--blanco);
+  font-size: 1.3rem;
+  text-decoration: none;
+}
+
+.menu-mobile a:hover {
+  color: var(--acento);
+}
+
+/* Evitar solapamiento con elementos */
+body.menu-abierto {
+  overflow: hidden;
+}
+
+/* Banner más responsivo en móviles */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .banner {
+    height: 75vh;
+  }
+
+  .banner img {
+    object-position: center;
+  }
+}
+
+/* ADMIN NAVBAR */
+.admin-navbar {
+  background-color: var(--negro);
+  width: 100%;
+  padding: 1.5rem 1rem 1rem 1rem; /* más padding inferior para evitar solape */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Admin navbar reorganizada con hamburguesa */
+.admin-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.admin-menu {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+.close-menu {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: var(--blanco); /* SIEMPRE blanca */
+  align-self: flex-end;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  z-index: 3000;
+}
+.close-menu:hover {
+  color: var(--acento);
+  transform: scale(1.1);
+  transition: all 0.2s ease;
+}
+.btn-admin-nav {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  text-align: center;
+  border: 2px solid var(--blanco);
+  background-color: var(--negro);
+  color: var(--blanco);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  width: 100%;
+}
+.btn-admin-nav:hover {
+  background-color: var(--acento);
+  color: var(--negro);
+  border-color: var(--acento);
+}
+/* Modo oscuro correcto para botones del admin */
+body.modo-oscuro .btn-admin-nav {
+  background-color: transparent !important;
+  color: var(--blanco) !important;
+  border-color: var(--blanco);
+}
+
+body.modo-oscuro .btn-admin-nav:hover {
+  background-color: var(--acento) !important;
+  color: var(--negro) !important;
+  border-color: var(--acento);
+}
+.admin-menu.activo {
+  display: flex;
+}
+.admin-menu {
+  display: none;
+  ...
+}
+@media (min-width: 769px) {
+  .admin-menu {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    background-color: transparent;
+    padding: 0;
+  }
+
+  .menu-toggle,
+  .close-menu {
+    display: none !important;
+  }
+
+  .btn-admin-nav {
+    width: auto;
+  }
+}
+
+
+button:focus, a:focus {
+  outline: 2px solid var(--acento);
+  outline-offset: 2px;
+}
+
+.btn-volver-movil {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .btn-volver-movil {
+    display: inline-block;
+    margin: 1rem auto 0 auto;
+    padding: 0.6rem 1.2rem;
+    border: 2px solid var(--negro);
+    background-color: transparent;
+    color: var(--negro);
+    text-align: center;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    border-radius: 6px;
+    text-decoration: none;
+    width: fit-content;
+    display: block;
+  }
+
+  body.modo-oscuro .btn-volver-movil {
+    color: var(--blanco);
+    border-color: var(--blanco);
+  }
+
+  body.modo-oscuro .btn-volver-movil:hover {
+    background-color: var(--acento);
+    color: var(--negro);
+    border-color: var(--acento);
+  }
+
+  .btn-volver-movil:hover {
+    background-color: var(--acento);
+    color: var(--negro);
+    border-color: var(--acento);
+  }
+}
+.btn-login-link {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  border: 2px solid var(--blanco);
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--blanco);
+  font-weight: bold;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  white-space: nowrap;        /* Evita que el texto se parta */
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 480px) {
+  .btn-login-link {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
+
+.btn-login-link:hover {
+  background-color: var(--acento);
+  color: var(--negro);
+  border-color: var(--acento);
+}
+
+body.modo-oscuro .btn-login-link {
+  color: var(--blanco);
+  border-color: var(--blanco);
+}
+
+body.modo-oscuro .btn-login-link:hover {
+  background-color: var(--acento);
+  color: var(--negro);
+  border-color: var(--acento);
+}
+/* Mostrar el menú del admin siempre en escritorio */
+@media (min-width: 769px) {
+  .admin-menu {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .menu-toggle, .close-menu {
+    display: none;
+  }
+}
+@media (max-width: 768px) {
+  main {
+    padding-top: 150px; /* Aún más espacio en móvil por hamburguesa */
+  }
+}
+/* FORMULARIO ADMIN BONITO Y RESPONSIVE */
+#form-producto {
+  background-color: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(5px);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 2rem auto;
+  max-width: 900px;
+  width: 90%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+#form-producto input[type="text"],
+#form-producto input[type="number"],
+#form-producto input[type="url"] {
+  padding: 0.8rem;
+  border: 2px solid var(--negro);
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  flex: 1 1 220px;
+  background-color: transparent;
+  color: inherit;
+}
+
+body.modo-oscuro #form-producto input[type="text"],
+body.modo-oscuro #form-producto input[type="number"],
+body.modo-oscuro #form-producto input[type="url"] {
+  border-color: var(--blanco);
+  color: var(--blanco);
+}
+
+#form-producto button {
+  padding: 0.8rem 1.5rem;
+  border: 2px solid var(--negro);
+  border-radius: 8px;
+  background-color: transparent;
+  color: var(--negro);
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1 1 100%;
+  max-width: 200px;
+}
+
+body.modo-oscuro #form-producto button {
+  border-color: var(--blanco);
+  color: var(--blanco);
+}
+
+#form-producto button:hover {
+  background-color: var(--acento);
+  color: var(--negro);
+  border-color: var(--acento);
+}
+@media (min-width: 1024px) {
+  body.admin-page main {
+    padding-top: 100px; /* ajusta según la altura real de tu header + botones */
+  }
+}
+@media (max-width: 768px) {
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    padding: 1rem;
+  }
+
+  .navbar .logo {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--blanco);
+  }
+
+  .icons {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .nav-mobile-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .nav-mobile-right span,
+  .nav-mobile-right .cart-icon {
+    color: var(--blanco);
+    font-size: 1rem;
+  }
+}
+
+/* Versión móvil: alinear cerrar sesión con carrito */
+@media (max-width: 768px) {
+  .cerrar-sesion-icon {
+    color: var(--blanco);
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    text-wrap: nowrap;
+  }
+
+  .icons {
+    gap: 1rem;
+    align-items: center;
+  }
+
+  #cerrar-sesion {
+    display: none; /* oculta el link dentro del menú móvil */
+  }
+}
+
+@media (min-width: 1024px) {
+  body.admin-page main {
+    padding-top: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .icons {
+    justify-content: flex-end;
+    width: 100%;
+    padding-top: 0.5rem;
+  }
+
+  .btn-login-link {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+.usuario-nombre {
+  font-size: 0.9rem;
+  margin-right: 1rem;
+  color: var(--blanco);
+}
+.btn-instalar {
+  background-color: var(--negro);
+  color: var(--blanco);
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.btn-instalar:hover {
+  background-color: var(--acento);
+  color: var(--negro);
+}

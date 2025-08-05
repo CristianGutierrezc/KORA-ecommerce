@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - KŌRA</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body class="admin-page">
+
+  <!-- Menú de navegación -->
+  <header>
+    <nav class="navbar admin-navbar">
+      <div class="admin-topbar">
+        <div class="logo">KŌRA Admin</div>
+        <button id="admin-menu-toggle" class="menu-toggle">☰</button>
+      </div>
+
+      <div class="admin-menu" id="admin-menu">
+        <button id="admin-menu-close" class="close-menu">✕</button>
+        <a href="../index.html" class="btn-admin-nav">Volver a tienda</a>
+        <button id="cargar-ejemplo" class="btn-admin-nav" type="button">Cargar productos de ejemplo</button>
+        <button id="vaciar-lista" class="btn-admin-nav" type="button">Vaciar lista</button>
+        <button id="publicar-tienda" class="btn-admin-nav" type="button">Publicar en tienda</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Barra de sesión admin -->
+  <div class="admin-session-bar" style="padding: 1rem 2rem;">
+    <span id="usuario-nombre" class="usuario-nombre"></span>
+    <a href="../pages/profile.html" id="perfil-link" class="btn-login-link" style="display:none;">Mi perfil</a>
+    <a href="../pages/form-login.html" id="login-link" class="btn-login-link">Iniciar sesión</a>
+    <a href="#" id="cerrar-sesion" class="btn-login-link" style="display:none;">Cerrar sesión</a>
+  </div>
+
+  <!-- Formulario de productos -->
+  <main>
+    <h2 style="text-align:center;">Gestión de Productos</h2>
+
+    <form id="form-producto">
+      <input type="text" id="nombre" placeholder="Nombre" required />
+      <input type="text" id="descripcion" placeholder="Descripción" required />
+      <input type="number" id="precio" placeholder="Precio (€)" step="0.01" required />
+      <input type="url" id="imagen" placeholder="URL de imagen" required />
+      <input type="hidden" id="producto-id" />
+      <button type="submit">Guardar producto</button>
+    </form>
+
+    <!-- Zona de visualización -->
+    <section id="lista-admin" class="grid-productos" style="margin-top:2rem;"></section>
+  </main>
+
+  <!-- SCRIPTS -->
+  <script type="module" src="../js/controllers/dashboard.controller.js"></script>
+  <script type="module" src="../js/utils/cookies.js"></script>
+
+  <!-- Control de sesión y navbar -->
+  <script type="module">
+    import { getCookie, borrarCookie } from '../js/utils/cookies.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const sesion = getCookie('sesionKora');
+      const user = sesion ? JSON.parse(sesion) : null;
+
+      const nombreSpan = document.getElementById('usuario-nombre');
+      const cerrarBtn = document.getElementById('cerrar-sesion');
+      const loginLink = document.getElementById('login-link');
+      const perfilLink = document.getElementById('perfil-link');
+
+      if (user) {
+        nombreSpan.textContent = `👤 ${user.nombre}`;
+        cerrarBtn.style.display = 'inline-block';
+        loginLink.style.display = 'none';
+        perfilLink.style.display = 'inline-block';
+      }
+
+      cerrarBtn?.addEventListener('click', () => {
+        borrarCookie('sesionKora');
+        localStorage.removeItem('sesionActiva');
+        window.location.href = '../index.html';
+      });
+    });
+  </script>
+
+  <!-- Menú admin hamburguesa -->
+  <script>
+    const toggleBtn = document.getElementById('admin-menu-toggle');
+    const closeBtn = document.getElementById('admin-menu-close');
+    const adminMenu = document.getElementById('admin-menu');
+
+    toggleBtn.addEventListener('click', () => {
+      adminMenu.classList.add('activo');
+    });
+
+    closeBtn.addEventListener('click', () => {
+      adminMenu.classList.remove('activo');
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "kora-ecommerce",
+  "version": "1.0.0",
+  "description": "Proyecto KŌRA - Tienda ecommerce futurista",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom"
+  }
+}
+"scripts": {
+  "test": "jest"
+}

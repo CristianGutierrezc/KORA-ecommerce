@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crear producto - KŌRA</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+
+  <!-- Encabezado sesión -->
+  <header style="padding: 1rem 2rem;">
+    <span id="usuario-nombre" class="usuario-nombre"></span>
+    <a href="../pages/form-login.html" id="login-link" class="btn-login-link">Iniciar sesión</a>
+    <a href="#" id="cerrar-sesion" class="btn-login-link" style="display:none;">Cerrar sesión</a>
+  </header>
+
+  <main style="max-width: 600px; margin: auto; padding: 2rem;">
+    <h2 style="text-align: center;">Nuevo producto</h2>
+
+    <form id="form-crear-producto">
+      <input type="text" id="nombre" placeholder="Nombre del producto" required />
+      <input type="text" id="descripcion" placeholder="Descripción corta" required />
+      <input type="number" id="precio" placeholder="Precio (€)" step="0.01" required />
+      <input type="url" id="imagen" placeholder="URL de imagen" required />
+      <button type="submit">Crear producto</button>
+    </form>
+  </main>
+
+  <!-- SCRIPTS -->
+  <script type="module" src="../js/controllers/crear-producto.controller.js"></script>
+  <script type="module" src="../js/utils/cookies.js"></script>
+
+  <!-- Control de sesión y logout -->
+  <script type="module">
+    import { getCookie, borrarCookie } from '../js/utils/cookies.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const sesion = getCookie('sesionKora');
+      const user = sesion ? JSON.parse(sesion) : null;
+
+      const nombreSpan = document.getElementById('usuario-nombre');
+      const cerrarBtn = document.getElementById('cerrar-sesion');
+      const loginLink = document.getElementById('login-link');
+
+      // Mostrar nombre y botones
+      if (user) {
+        nombreSpan.textContent = `👤 ${user.nombre}`;
+        cerrarBtn.style.display = 'inline-block';
+        loginLink.style.display = 'none';
+      }
+
+      // Redirigir si no es admin
+      if (!user || user.rol !== 'admin') {
+        alert('Acceso denegado. Solo administradores pueden ingresar aquí.');
+        window.location.href = '../index.html';
+      }
+
+      // Logout
+      cerrarBtn?.addEventListener('click', () => {
+        borrarCookie('sesionKora');
+        localStorage.removeItem('sesionActiva');
+        window.location.href = '../index.html';
+      });
+    });
+  </script>
+
+</body>
+</html>

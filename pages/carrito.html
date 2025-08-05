@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Carrito - KŌRA</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">KŌRA</div>
+      <ul class="nav-links">
+        <li><a href="../index.html">Volver a la tienda</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <a href="../index.html" class="btn-volver-movil">← Volver a la tienda</a>
+
+    <h2 style="text-align:center; margin-top: 2rem;">Tu carrito</h2>
+    
+    <section id="carrito-contenido" class="grid-productos" style="padding:2rem;"></section>
+
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <p>Total: <strong id="total-final">0 €</strong></p>
+      <button id="finalizar-compra" class="btn-publicar">Finalizar compra</button>
+    </div>
+  </main>
+
+  <!-- SCRIPTS NUEVOS -->
+  <script type="module" src="../js/controllers/carrito.controller.js"></script>
+</body>
+</html>

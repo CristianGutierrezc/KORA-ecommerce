@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Iniciar sesión - KŌRA</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+
+  <!-- Encabezado y barra de sesión -->
+  <header style="padding: 1rem 2rem;">
+    <span id="usuario-nombre" class="usuario-nombre"></span>
+    <a href="#" id="cerrar-sesion" class="btn-login-link" style="display:none;">Cerrar sesión</a>
+  </header>
+
+  <!-- Formulario de login -->
+  <main style="max-width: 500px; margin: auto; padding: 2rem;">
+    <h2 style="text-align: center;">Iniciar sesión</h2>
+
+    <form id="form-login">
+      <input type="email" id="email" placeholder="Correo electrónico" required />
+      <input type="password" id="password" placeholder="Contraseña" required />
+      <button type="submit">Entrar</button>
+    </form>
+  </main>
+
+  <!-- SCRIPTS -->
+  <script type="module" src="../js/controllers/login.controller.js"></script>
+  <script type="module" src="../js/utils/cookies.js"></script>
+
+  <!-- Control de sesión y logout -->
+  <script type="module">
+    import { getCookie, borrarCookie } from '../js/utils/cookies.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const sesion = getCookie('sesionKora');
+      const user = sesion ? JSON.parse(sesion) : null;
+
+      const nombreSpan = document.getElementById('usuario-nombre');
+      const cerrarBtn = document.getElementById('cerrar-sesion');
+
+      if (user) {
+        nombreSpan.textContent = `👤 ${user.nombre}`;
+        cerrarBtn.style.display = 'inline-block';
+
+        // Redirigir si ya está logueado
+        if (user.rol === 'admin') {
+          window.location.href = 'dashboard.html';
+        } else {
+          window.location.href = '../index.html';
+        }
+      }
+
+      cerrarBtn?.addEventListener('click', () => {
+        borrarCookie('sesionKora');
+        localStorage.removeItem('sesionActiva');
+        window.location.href = '../index.html';
+      });
+    });
+  </script>
+
+</body>
+</html>
