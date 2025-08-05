@@ -3,6 +3,7 @@ import {
   guardarProducto
 } from '../utils/indexedDB.js';
 import { getCookie } from '../utils/cookies.js';
+import { validarProducto } from '../utils/validarProducto.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const sesion = getCookie('sesionKora');
@@ -42,29 +43,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('form-actualizar-producto').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-   const actualizado = {
-  id,
-  nombre: nombre.value.trim(),
-  descripcion: descripcion.value.trim(),
-  precio: parseFloat(precio.value),
-  imagen: imagen.value.trim(),
-  autor: producto.autor || user.email // 🔥 mantenemos autor original o lo definimos si no existía
-};
+    const actualizado = {
+      id,
+      nombre: nombre.value.trim(),
+      descripcion: descripcion.value.trim(),
+      precio: parseFloat(precio.value),
+      imagen: imagen.value.trim(),
+      autor: producto.autor || user.email // 🔥 mantenemos autor original o lo definimos si no existía
+    };
 
-
-    // Validaciones
-    if (!actualizado.nombre || !actualizado.descripcion || !actualizado.precio || !actualizado.imagen) {
-      alert('Todos los campos son obligatorios.');
-      return;
-    }
-
-    if (actualizado.descripcion.length > 150) {
-      alert('La descripción no puede superar los 150 caracteres.');
-      return;
-    }
-
-    if (!/\.(jpg|jpeg|png|webp|gif)$/i.test(actualizado.imagen)) {
-      alert('La URL de la imagen debe ser válida.');
+    const { valido, mensaje } = validarProducto(actualizado, productos);
+    if (!valido) {
+      alert(mensaje);
       return;
     }
 
