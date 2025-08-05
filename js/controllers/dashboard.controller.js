@@ -5,6 +5,7 @@ import {
   guardarProductosLista,
   eliminarProducto
 } from '../utils/indexedDB.js';
+import { validarProducto } from '../utils/validarProducto.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const sesion = obtenerSesion();
@@ -50,52 +51,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  function camposValidos(p) {
-    if (!p.nombre || !p.descripcion || !p.precio || !p.imagen) {
-      alert('Todos los campos son obligatorios.');
-      return false;
-    }
-
-    if (p.descripcion.length > 150) {
-      alert('La descripción no puede superar los 150 caracteres.');
-      return false;
-    }
-
-    const urlRegex = /\.(jpeg|jpg|png|webp|gif)$/i;
-    if (!urlRegex.test(p.imagen)) {
-      alert('La URL debe ser válida y apuntar a una imagen.');
-      return false;
-    }
-
-    const duplicado = adminProductos.some(prod => prod.nombre === p.nombre && prod.id !== p.id);
-    if (duplicado) {
-      alert('Ya existe un producto con ese nombre.');
-      return false;
-    }
-
-    return true;
-  }
-
   // Crear nuevo producto directamente desde el formulario
   form.addEventListener('submit', async e => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const nuevoProducto = {
-    id: idField.value || crypto.randomUUID(),
-    nombre: nombre.value.trim(),
-    descripcion: descripcion.value.trim(),
-    precio: parseFloat(precio.value),
-    imagen: imagen.value.trim(),
-    autor: sesion.email // 🔥 nuevo campo que identifica al creador
-  };
+    const nuevoProducto = {
+      id: idField.value || crypto.randomUUID(),
+      nombre: nombre.value.trim(),
+      descripcion: descripcion.value.trim(),
+      precio: parseFloat(precio.value),
+      imagen: imagen.value.trim(),
+      autor: sesion.email // 🔥 nuevo campo que identifica al creador
+    };
 
-  if (!camposValidos(nuevoProducto)) return;
+    const { valido, mensaje } = validarProducto(nuevoProducto, adminProductos);
+    if (!valido) {
+      alert(mensaje);
+      return;
+    }
 
-  await guardarProducto(nuevoProducto);
-  adminProductos = await obtenerTodosLosProductos();
-  form.reset();
-  renderLista();
-});
+    await guardarProducto(nuevoProducto);
+    adminProductos = await obtenerTodosLosProductos();
+    form.reset();
+    renderLista();
+  });
 
   // Botón: cargar productos de ejemplo
   btnCargar.addEventListener('click', async () => {

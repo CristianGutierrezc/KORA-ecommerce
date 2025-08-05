@@ -1,12 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
   // 🌙 Botón de modo oscuro
   const modoBtn = document.createElement('button');
-  modoBtn.textContent = '🌙 Modo Oscuro';
-  modoBtn.style.position = 'fixed';
-  modoBtn.style.bottom = '10px';
-  modoBtn.style.right = '10px';
-  modoBtn.style.padding = '0.5rem';
-  modoBtn.style.zIndex = '1000';
+  modoBtn.textContent = '🌙';
+  modoBtn.className = 'btn-modo';
+  modoBtn.setAttribute('aria-label', 'Alternar modo oscuro');
   document.body.appendChild(modoBtn);
 
   // Contenedor de controles (orden, precio, vista, búsqueda)
@@ -24,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <option value="menor">Menor a mayor</option>
     </select>
     <button id="vista-toggle">Cambiar Vista</button>
-<input type="text" id="busqueda-productos" placeholder="Buscar productos..." class="busqueda-input" />
+    <input type="text" id="busqueda-productos" placeholder="Buscar productos..." class="busqueda-input" />
   `;
   document.querySelector('main')?.prepend(controles);
 
@@ -104,16 +101,17 @@ document.addEventListener('DOMContentLoaded', () => {
   render(productosOriginales);
 });
 
-// ☰ Abrir/Cerrar menú lateral en móviles
-document.getElementById("hamburguesa").addEventListener("click", () => {
-  document.getElementById("menu-lateral").classList.toggle("activo");
-  document.getElementById("fondo-oscuro").classList.toggle("visible");
+// ☰ Abrir/Cerrar menú lateral en móviles (solo si existen los elementos)
+document.getElementById("hamburguesa")?.addEventListener("click", () => {
+  document.getElementById("menu-lateral")?.classList.toggle("activo");
+  document.getElementById("fondo-oscuro")?.classList.toggle("visible");
 });
 
-document.getElementById("fondo-oscuro").addEventListener("click", () => {
-  document.getElementById("menu-lateral").classList.remove("activo");
-  document.getElementById("fondo-oscuro").classList.remove("visible");
+document.getElementById("fondo-oscuro")?.addEventListener("click", () => {
+  document.getElementById("menu-lateral")?.classList.remove("activo");
+  document.getElementById("fondo-oscuro")?.classList.remove("visible");
 });
+
 // Aplica modo oscuro automáticamente si está activado por cookie
 document.addEventListener("DOMContentLoaded", () => {
   if (document.cookie.includes("modo=oscuro")) {

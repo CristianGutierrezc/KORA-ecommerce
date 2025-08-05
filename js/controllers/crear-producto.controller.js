@@ -1,5 +1,6 @@
 import { guardarProducto, obtenerTodosLosProductos } from '../utils/indexedDB.js';
 import { getCookie } from '../utils/cookies.js';
+import { validarProducto } from '../utils/validarProducto.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const sesion = getCookie('sesionKora');
@@ -20,36 +21,19 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-const nuevo = {
-  id: crypto.randomUUID(),
-  nombre: nombre.value.trim(),
-  descripcion: descripcion.value.trim(),
-  precio: parseFloat(precio.value),
-  imagen: imagen.value.trim(),
-  autor: user.email // 🔥 aquí también lo enlazamos al creador
-};
-
-    // Validaciones
-    if (!nuevo.nombre || !nuevo.descripcion || !nuevo.precio || !nuevo.imagen) {
-      alert('Todos los campos son obligatorios.');
-      return;
-    }
-
-    if (nuevo.descripcion.length > 150) {
-      alert('La descripción no puede superar los 150 caracteres.');
-      return;
-    }
-
-    if (!/\.(jpg|jpeg|png|webp|gif)$/i.test(nuevo.imagen)) {
-      alert('La imagen debe tener un formato válido (.jpg, .png, etc).');
-      return;
-    }
+    const nuevo = {
+      id: crypto.randomUUID(),
+      nombre: nombre.value.trim(),
+      descripcion: descripcion.value.trim(),
+      precio: parseFloat(precio.value),
+      imagen: imagen.value.trim(),
+      autor: user.email // 🔥 aquí también lo enlazamos al creador
+    };
 
     const productosActuales = await obtenerTodosLosProductos();
-    const duplicado = productosActuales.find(p => p.nombre.toLowerCase() === nuevo.nombre.toLowerCase());
-
-    if (duplicado) {
-      alert('Ya existe un producto con ese nombre.');
+    const { valido, mensaje } = validarProducto(nuevo, productosActuales);
+    if (!valido) {
+      alert(mensaje);
       return;
     }
 
