@@ -1,127 +1,127 @@
-import store from '../redux/store.js';
-import {
-  agregarAlCarrito,
-  eliminarDelCarrito
-   vaciarCarrito 
-} from '../redux/carrito.slice.js';
-import { obtenerProductos } from '../utils/fnStorages.js';
+// js/controllers/carrito.controller.js
+
+import { store } from '../redux/store.js';
+import { eliminarProducto, vaciarCarrito } from '../redux/carrito.slice.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const miniCart = document.getElementById('mini-cart');
-  const cartIcon = document.getElementById('cart-icon');
-  const cartCount = document.getElementById('cart-count');
-  const carritoContenido = document.getElementById('carrito-contenido');
-  const totalFinal = document.getElementById('total-final');
+  const contenedor = document.getElementById('carrito-contenido');
+  const total = document.getElementById('total-final');
+  const btnVaciar = document.getElementById('vaciar-carrito');
+  const btnFinalizar = document.getElementById('finalizar-compra');
+  const contadorCarrito = document.getElementById('cart-count');
 
-  // 🎯 Agregar producto al carrito
-  document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('btn-agregar')) {
-      const id = e.target.dataset.id;
-      const productos = obtenerProductos();
-      const producto = productos.find(p => p.id === id);
-      if (producto) {
-        store.dispatch(agregarAlCarrito(producto));
-        renderMiniCarrito();
-        actualizarContador();
-        renderPaginaCarrito(); // por si estamos en carrito.html
-      }
-    }
-
-    if (e.target.classList.contains('btn-eliminar')) {
-      const id = e.target.dataset.id;
-      store.dispatch(eliminarDelCarrito(id));
-      renderMiniCarrito();
-      actualizarContador();
-      renderPaginaCarrito();
-    }
-  });
-
-  // 🎯 Mostrar/ocultar mini carrito
-  cartIcon?.addEventListener('click', () => {
-    miniCart?.classList.toggle('visible');
-  });
-
-  // ✅ Actualizar contador de carrito
-  function actualizarContador() {
+  // Función para renderizar los productos del carrito
+  function render() {
     const carrito = store.getState().carrito.items;
-    const total = carrito.reduce((acc, item) => acc + item.cantidad, 0);
-    cartCount.textContent = total;
-  }
-
-  // ✅ Render mini carrito
-  function renderMiniCarrito() {
-    const carrito = store.getState().carrito.items;
-    miniCart.innerHTML = '<h4>Carrito</h4>';
+    contenedor.innerHTML = '';
 
     if (carrito.length === 0) {
-      miniCart.innerHTML += '<p>Tu carrito está vacío.</p>';
+      contenedor.innerHTML = '<p>Tu carrito está vacío.</p>';
+      total.textContent = '0 €';
+      contadorCarrito.textContent = '0';
       return;
     }
 
+    let suma = 0;
+    let cantidadTotal = 0;
+
     carrito.forEach(p => {
-      miniCart.innerHTML += `
-        <div class="item-carrito">
-          <span>${p.nombre}</span> x${p.cantidad}
-          <span>${(p.precio * p.cantidad).toFixed(2)} €</span>
+      const subtotal = p.precio * p.cantidad;
+      suma += subtotal;
+      cantidadTotal += p.cantidad;
+
+      contenedor.innerHTML += `
+        <div class="producto-card">
+          <h3>${p.nombre}</h3>
+          <p>${p.descripcion}</p>
+          <p>Cantidad: ${p.cantidad}</p>
+          <p>Subtotal: ${subtotal.toFixed(2)} €</p>
+          <button class="btn-eliminar" data-id="${p.id}">Eliminar</button>
         </div>
       `;
     });
 
-    const total = carrito.reduce((acc, p) => acc + (p.precio * p.cantidad), 0);
-    miniCart.innerHTML += `<p><strong>Total: ${total.toFixed(2)} €</strong></p>`;
-    miniCart.innerHTML += `<a href="pages/carrito.html" class="btn-ver-carrito">Ver carrito completo</a>`;
+    total.textContent = suma.toFixed(2) + ' €';
+    contadorCarrito.textContent = cantidadTotal;
   }
 
-  // ✅ Render página carrito.html si estamos ahí
-  function renderPaginaCarrito() {
-    if (!carritoContenido || !totalFinal) return;
+  // Evento para eliminar productos individualmente
+  document.addEventListener('click', e => {
+    if (e.target.classList.contains('btn-eliminar')) {
+      const id = e.target.dataset.id;
+      store.dispatch(eliminarProducto(id));
+    }
+  });
 
+  // Botón para vaciar el carrito completamente
+  btnVaciar?.addEventListener('click', () => {
+    if (confirm('¿Vaciar todo el carrito?')) {
+      store.dispatch(vaciarCarrito());
+    }
+  });
+
+  // Botón para finalizar compra
+  btnFinalizar?.addEventListener('click', () => {
     const carrito = store.getState().carrito.items;
-    carritoContenido.innerHTML = '';
-
     if (carrito.length === 0) {
-      carritoContenido.innerHTML = '<p style="text-align:center;">Tu carrito está vacío.</p>';
-      totalFinal.textContent = '0 €';
+      alert('Tu carrito está vacío.');
       return;
     }
 
-    carrito.forEach(p => {
-      const div = document.createElement('div');
-      div.className = 'producto-card';
-      div.innerHTML = `
-        <img src="${p.imagen}" alt="${p.nombre}" class="producto-img"/>
-        <h3>${p.nombre}</h3>
-        <p>${p.descripcion}</p>
-        <p>Precio unidad: ${p.precio} €</p>
-        <p>Cantidad: ${p.cantidad}</p>
-        <p>Subtotal: ${(p.precio * p.cantidad).toFixed(2)} €</p>
-        <button class="btn-eliminar" data-id="${p.id}">Eliminar</button>
-      `;
-      carritoContenido.appendChild(div);
-    });
+    alert('Gracias por tu compra. ¡Te enviaremos un email de confirmación!');
+    store.dispatch(vaciarCarrito());
+  });
 
-    const total = carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
-    totalFinal.textContent = total.toFixed(2) + ' €';
-  }
+  // Suscribimos el render a los cambios del store
+  store.subscribe(render);
 
-  // 🟢 Inicialización
-  renderMiniCarrito();
-  actualizarContador();
-  renderPaginaCarrito();
+  render(); // Render inicial
 });
-  // 🎯 Finalizar compra
-  const btnFinalizar = document.getElementById('finalizar-compra');
-  if (btnFinalizar) {
-    btnFinalizar.addEventListener('click', () => {
-      if (confirm('¿Deseas finalizar la compra?')) {
-        store.dispatch(limpiarCarrito());
-        alert('Gracias por tu compra. Carrito vaciado.');
-        renderMiniCarrito();
-        renderPaginaCarrito();
-        actualizarContador();
-      }
-    });
+// MINI-CARRITO dinámico al pasar el mouse
+const miniCart = document.getElementById('mini-cart');
+const iconCart = document.getElementById('cart-icon');
+
+// Función que renderiza el mini carrito flotante
+function renderMiniCart() {
+  const carrito = store.getState().carrito.items;
+  miniCart.innerHTML = '';
+
+  if (carrito.length === 0) {
+    miniCart.innerHTML = '<p style="text-align:center;">Carrito vacío</p>';
+    return;
   }
-export function calcularTotal(carrito) {
-  return carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
+
+  carrito.forEach(p => {
+    miniCart.innerHTML += `
+      <div class="item">
+        <h4>${p.nombre}</h4>
+        <p>${p.cantidad} x ${p.precio} €</p>
+        <p>Subtotal: ${(p.precio * p.cantidad).toFixed(2)} €</p>
+      </div>
+    `;
+  });
+
+  const totalMini = carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
+  miniCart.innerHTML += `<p class="mini-cart-total">Total: ${totalMini.toFixed(2)} €</p>`;
 }
+
+// Mostrar y ocultar el mini carrito al hacer hover sobre el ícono
+iconCart?.addEventListener('mouseenter', () => {
+  renderMiniCart();
+  miniCart.classList.add('active');
+});
+
+iconCart?.addEventListener('mouseleave', () => {
+  setTimeout(() => miniCart.classList.remove('active'), 300);
+});
+
+miniCart?.addEventListener('mouseenter', () => {
+  miniCart.classList.add('active');
+});
+
+miniCart?.addEventListener('mouseleave', () => {
+  miniCart.classList.remove('active');
+});
+
+// Asegura que el mini carrito también se actualiza al cambiar el estado
+store.subscribe(renderMiniCart);

@@ -1,48 +1,64 @@
-
+// redux/carrito.slice.js
 import { createSlice } from '@reduxjs/toolkit';
+
+// Intentamos recuperar el carrito guardado desde localStorage
+const carritoGuardado = localStorage.getItem('reduxCarrito');
+
+const estadoInicial = {
+  items: carritoGuardado ? JSON.parse(carritoGuardado) : []
+};
+
+// Función auxiliar para guardar en localStorage
+function guardarEnLocalStorage(items) {
+  localStorage.setItem('reduxCarrito', JSON.stringify(items));
+}
 
 const carritoSlice = createSlice({
   name: 'carrito',
-  initialState: {
-    items: JSON.parse(localStorage.getItem('carrito')) || []
-  },
+  initialState: estadoInicial,
   reducers: {
-    agregarAlCarrito: (state, action) => {
-      const producto = action.payload;
-      const existe = state.items.find(p => p.id === producto.id);
+    /**
+     * Agrega un producto al carrito.
+     * Si ya existe, aumenta la cantidad.
+     */
+    agregarProducto: (state, action) => {
+      const nuevo = action.payload;
+      const existe = state.items.find(p => p.id === nuevo.id);
 
       if (existe) {
-        existe.cantidad += 1;
+        existe.cantidad += nuevo.cantidad;
       } else {
-        state.items.push({ ...producto, cantidad: 1 });
+        state.items.push(nuevo);
       }
 
-      localStorage.setItem('carrito', JSON.stringify(state.items));
+      guardarEnLocalStorage(state.items);
     },
-    eliminarDelCarrito: (state, action) => {
-      state.items = state.items.filter(p => p.id !== action.payload);
-      localStorage.setItem('carrito', JSON.stringify(state.items));
+
+    /**
+     * Elimina un producto por su ID.
+     */
+    eliminarProducto: (state, action) => {
+      const id = action.payload;
+      state.items = state.items.filter(p => p.id !== id);
+      guardarEnLocalStorage(state.items);
     },
-    actualizarCantidad: (state, action) => {
-      const { id, cantidad } = action.payload;
-      const producto = state.items.find(p => p.id === id);
-      if (producto && cantidad > 0) {
-        producto.cantidad = cantidad;
-        localStorage.setItem('carrito', JSON.stringify(state.items));
-      }
-    },
+
+    /**
+     * Vacía todo el carrito.
+     */
     vaciarCarrito: (state) => {
       state.items = [];
-      localStorage.removeItem('carrito');
+      localStorage.removeItem('reduxCarrito');
     }
   }
 });
 
+// Exportamos las acciones para usarlas en los controladores
 export const {
-  agregarAlCarrito,
-  eliminarDelCarrito,
-  actualizarCantidad,
+  agregarProducto,
+  eliminarProducto,
   vaciarCarrito
 } = carritoSlice.actions;
 
+// Exportamos el reducer para configurar el store
 export default carritoSlice.reducer;

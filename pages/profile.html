@@ -5,33 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Perfil - KŌRA</title>
   <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/base-estilos-kora.css" />
 </head>
 <body>
 
-  <!-- Barra de sesión usuario -->
+  <!-- Encabezado de sesión -->
   <header style="padding: 1rem 2rem;">
     <span id="usuario-nombre" class="usuario-nombre"></span>
     <a href="form-login.html" id="login-link" class="btn-login-link">Iniciar sesión</a>
     <a href="#" id="cerrar-sesion" class="btn-login-link" style="display:none;">Cerrar sesión</a>
   </header>
 
-  <!-- Formulario de perfil -->
+  <!-- Formulario de edición de perfil -->
   <main style="max-width: 600px; margin: auto; padding: 2rem;">
     <h2 style="text-align:center;">Editar Perfil</h2>
 
     <form id="form-perfil">
-      <input type="text" id="nombre" placeholder="Nombre" required />
-      <input type="email" id="email" placeholder="Correo electrónico" required />
-      <input type="password" id="password" placeholder="Nueva contraseña" required />
-      <button type="submit">Guardar cambios</button>
+      <label for="nombre">Nombre</label>
+      <input type="text" id="nombre" class="form-input" placeholder="Nombre" required />
+
+      <label for="email">Correo electrónico</label>
+      <input type="email" id="email" class="form-input" placeholder="Correo electrónico" required />
+
+      <label for="password">Nueva contraseña</label>
+      <input type="password" id="password" class="form-input" placeholder="Nueva contraseña" required />
+
+      <button type="submit" class="btn">Guardar cambios</button>
     </form>
   </main>
 
-  <!-- SCRIPTS -->
+  <!-- Script controlador -->
   <script type="module" src="../js/controllers/profile.controller.js"></script>
-  <script type="module" src="../js/utils/cookies.js"></script>
 
-  <!-- Control de sesión y logout -->
+  <!-- Control de sesión -->
   <script type="module">
     import { getCookie, borrarCookie } from '../js/utils/cookies.js';
 
@@ -43,17 +49,27 @@
       const cerrarBtn = document.getElementById('cerrar-sesion');
       const loginLink = document.getElementById('login-link');
 
-      if (user) {
-        nombreSpan.textContent = `👤 ${user.nombre}`;
-        cerrarBtn.style.display = 'inline-block';
-        loginLink.style.display = 'none';
+      if (!user) {
+        // Si no hay sesión activa, se redirige
+        window.location.href = 'form-login.html';
+        return;
       }
 
+      // Mostrar datos en header
+      nombreSpan.textContent = `👤 ${user.nombre}`;
+      cerrarBtn.style.display = 'inline-block';
+      loginLink.style.display = 'none';
+
+      // Logout
       cerrarBtn?.addEventListener('click', () => {
         borrarCookie('sesionKora');
         localStorage.removeItem('sesionActiva');
         window.location.href = '../index.html';
       });
+
+      // Precargar datos en formulario
+      document.getElementById('nombre').value = user.nombre;
+      document.getElementById('email').value = user.email;
     });
   </script>
 

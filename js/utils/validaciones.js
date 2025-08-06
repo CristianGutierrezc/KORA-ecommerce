@@ -1,7 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // 🌙 Botón de modo oscuro
+  // === Modo oscuro desde cookie ===
+  if (document.cookie.includes('modo=oscuro')) {
+    document.body.classList.add('modo-oscuro');
+  }
+
+  // 🌙 Botón modo oscuro flotante
   const modoBtn = document.createElement('button');
-  modoBtn.textContent = '🌙 Modo Oscuro';
+  modoBtn.id = 'toggle-dark-mode';
+  modoBtn.textContent = document.body.classList.contains('modo-oscuro') ? '☀️' : '🌙';
   modoBtn.style.position = 'fixed';
   modoBtn.style.bottom = '10px';
   modoBtn.style.right = '10px';
@@ -9,7 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
   modoBtn.style.zIndex = '1000';
   document.body.appendChild(modoBtn);
 
-  // Contenedor de controles (orden, precio, vista, búsqueda)
+  modoBtn.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('modo-oscuro');
+    document.cookie = `modo=${isDark ? 'oscuro' : 'claro'};path=/`;
+    modoBtn.textContent = isDark ? '☀️' : '🌙';
+  });
+
+  // === Controles de búsqueda, filtros y vista ===
   const controles = document.createElement('div');
   controles.className = 'barra-controles';
   controles.innerHTML = `
@@ -24,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <option value="menor">Menor a mayor</option>
     </select>
     <button id="vista-toggle">Cambiar Vista</button>
-<input type="text" id="busqueda-productos" placeholder="Buscar productos..." class="busqueda-input" />
+    <input type="text" id="busqueda-productos" placeholder="Buscar productos..." class="busqueda-input" />
   `;
   document.querySelector('main')?.prepend(controles);
 
@@ -35,20 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const productosOriginales = JSON.parse(localStorage.getItem('productos')) || [];
 
-  // Búsqueda
-  buscador.addEventListener('input', aplicarFiltrosYRenderizar);
-
-  // Aplicar filtros
-  ordenarSelect.addEventListener('change', aplicarFiltrosYRenderizar);
-  precioSelect.addEventListener('change', aplicarFiltrosYRenderizar);
-
-  // Cambiar vista
-  document.getElementById('vista-toggle').addEventListener('click', () => {
-    grid.classList.toggle('grid-productos');
-    grid.classList.toggle('vista-lista');
-  });
-
-  // Aplicar filtros y búsqueda
   function aplicarFiltrosYRenderizar() {
     let productosAMostrar = [...productosOriginales];
     const orden = ordenarSelect.value;
@@ -68,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
     render(productosAMostrar);
   }
 
-  // Pintar productos
   function render(productos) {
     grid.innerHTML = '';
     if (productos.length === 0) {
@@ -91,32 +88,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Modo oscuro con cookie
-  modoBtn.addEventListener('click', () => {
-    const isDark = document.body.classList.toggle('modo-oscuro');
-    document.cookie = `modo=${isDark ? 'oscuro' : 'claro'};path=/`;
+  // Eventos
+  buscador.addEventListener('input', aplicarFiltrosYRenderizar);
+  ordenarSelect.addEventListener('change', aplicarFiltrosYRenderizar);
+  precioSelect.addEventListener('change', aplicarFiltrosYRenderizar);
+
+  document.getElementById('vista-toggle').addEventListener('click', () => {
+    grid.classList.toggle('grid-productos');
+    grid.classList.toggle('vista-lista');
   });
 
-  if (document.cookie.includes('modo=oscuro')) {
-    document.body.classList.add('modo-oscuro');
+  // === Menú hamburguesa en móviles ===
+  const hamburguesa = document.getElementById("hamburguesa");
+  const fondoOscuro = document.getElementById("fondo-oscuro");
+
+  if (hamburguesa && fondoOscuro) {
+    hamburguesa.addEventListener("click", () => {
+      document.getElementById("menu-lateral").classList.toggle("activo");
+      fondoOscuro.classList.toggle("visible");
+    });
+
+    fondoOscuro.addEventListener("click", () => {
+      document.getElementById("menu-lateral").classList.remove("activo");
+      fondoOscuro.classList.remove("visible");
+    });
   }
 
+  // Render inicial
   render(productosOriginales);
-});
-
-// ☰ Abrir/Cerrar menú lateral en móviles
-document.getElementById("hamburguesa").addEventListener("click", () => {
-  document.getElementById("menu-lateral").classList.toggle("activo");
-  document.getElementById("fondo-oscuro").classList.toggle("visible");
-});
-
-document.getElementById("fondo-oscuro").addEventListener("click", () => {
-  document.getElementById("menu-lateral").classList.remove("activo");
-  document.getElementById("fondo-oscuro").classList.remove("visible");
-});
-// Aplica modo oscuro automáticamente si está activado por cookie
-document.addEventListener("DOMContentLoaded", () => {
-  if (document.cookie.includes("modo=oscuro")) {
-    document.body.classList.add("modo-oscuro");
-  }
 });

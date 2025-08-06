@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin - KŌRA</title>
   <link rel="stylesheet" href="../css/styles.css" />
+  
 </head>
 <body class="admin-page">
 
-  <!-- Menú de navegación -->
+  <!-- NAVBAR DE ADMINISTRACIÓN -->
   <header>
     <nav class="navbar admin-navbar">
       <div class="admin-topbar">
@@ -26,7 +27,7 @@
     </nav>
   </header>
 
-  <!-- Barra de sesión admin -->
+  <!-- BARRA DE SESIÓN -->
   <div class="admin-session-bar" style="padding: 1rem 2rem;">
     <span id="usuario-nombre" class="usuario-nombre"></span>
     <a href="../pages/profile.html" id="perfil-link" class="btn-login-link" style="display:none;">Mi perfil</a>
@@ -34,28 +35,37 @@
     <a href="#" id="cerrar-sesion" class="btn-login-link" style="display:none;">Cerrar sesión</a>
   </div>
 
-  <!-- Formulario de productos -->
-  <main>
+  <!-- FORMULARIO DE PRODUCTOS -->
+  <main style="max-width: 800px; margin: auto; padding: 2rem;">
     <h2 style="text-align:center;">Gestión de Productos</h2>
 
     <form id="form-producto">
-      <input type="text" id="nombre" placeholder="Nombre" required />
-      <input type="text" id="descripcion" placeholder="Descripción" required />
-      <input type="number" id="precio" placeholder="Precio (€)" step="0.01" required />
-      <input type="url" id="imagen" placeholder="URL de imagen" required />
+      <label for="nombre">Nombre</label>
+      <input type="text" id="nombre" class="form-input" placeholder="Nombre" required />
+
+      <label for="descripcion">Descripción</label>
+      <input type="text" id="descripcion" class="form-input" placeholder="Descripción" required />
+
+      <label for="precio">Precio (€)</label>
+      <input type="number" id="precio" class="form-input" placeholder="Precio (€)" step="0.01" required />
+
+      <label for="imagen">URL de imagen</label>
+      <input type="url" id="imagen" class="form-input" placeholder="URL de imagen" required />
+
       <input type="hidden" id="producto-id" />
-      <button type="submit">Guardar producto</button>
+
+      <button type="submit" class="btn">Guardar producto</button>
     </form>
 
-    <!-- Zona de visualización -->
+    <!-- Lista de productos -->
     <section id="lista-admin" class="grid-productos" style="margin-top:2rem;"></section>
   </main>
 
-  <!-- SCRIPTS -->
+  <!-- CONTROLADOR JS -->
   <script type="module" src="../js/controllers/dashboard.controller.js"></script>
   <script type="module" src="../js/utils/cookies.js"></script>
 
-  <!-- Control de sesión y navbar -->
+  <!-- CONTROL DE SESIÓN -->
   <script type="module">
     import { getCookie, borrarCookie } from '../js/utils/cookies.js';
 
@@ -68,13 +78,19 @@
       const loginLink = document.getElementById('login-link');
       const perfilLink = document.getElementById('perfil-link');
 
-      if (user) {
-        nombreSpan.textContent = `👤 ${user.nombre}`;
-        cerrarBtn.style.display = 'inline-block';
-        loginLink.style.display = 'none';
-        perfilLink.style.display = 'inline-block';
+      if (!user || user.rol !== 'admin') {
+        // Redirigir si no es admin
+        window.location.href = '../index.html';
+        return;
       }
 
+      // Mostrar datos
+      nombreSpan.textContent = `👤 ${user.nombre}`;
+      cerrarBtn.style.display = 'inline-block';
+      loginLink.style.display = 'none';
+      perfilLink.style.display = 'inline-block';
+
+      // Logout
       cerrarBtn?.addEventListener('click', () => {
         borrarCookie('sesionKora');
         localStorage.removeItem('sesionActiva');
@@ -83,7 +99,7 @@
     });
   </script>
 
-  <!-- Menú admin hamburguesa -->
+  <!-- MENÚ HAMBURGUESA -->
   <script>
     const toggleBtn = document.getElementById('admin-menu-toggle');
     const closeBtn = document.getElementById('admin-menu-close');

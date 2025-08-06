@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Actualizar producto - KŌRA</title>
   <link rel="stylesheet" href="../css/styles.css" />
+ 
 </head>
 <body>
 
@@ -15,24 +16,33 @@
     <a href="#" id="cerrar-sesion" class="btn-login-link" style="display:none;">Cerrar sesión</a>
   </header>
 
+  <!-- Formulario para actualizar producto -->
   <main style="max-width: 600px; margin: auto; padding: 2rem;">
     <h2 style="text-align: center;">Editar producto</h2>
 
     <form id="form-actualizar-producto">
-      <input type="text" id="nombre" placeholder="Nombre del producto" required />
-      <input type="text" id="descripcion" placeholder="Descripción" required />
-      <input type="number" id="precio" placeholder="Precio (€)" step="0.01" required />
-      <input type="url" id="imagen" placeholder="URL de imagen" required />
+      <label for="nombre">Nombre del producto</label>
+      <input type="text" id="nombre" class="form-input" required />
+
+      <label for="descripcion">Descripción</label>
+      <input type="text" id="descripcion" class="form-input" required />
+
+      <label for="precio">Precio (€)</label>
+      <input type="number" id="precio" class="form-input" step="0.01" required />
+
+      <label for="imagen">URL de imagen</label>
+      <input type="url" id="imagen" class="form-input" required />
+
       <input type="hidden" id="producto-id" />
-      <button type="submit">Guardar cambios</button>
+
+      <button type="submit" class="btn">Guardar cambios</button>
     </form>
   </main>
 
-  <!-- SCRIPTS -->
+  <!-- Controlador funcional -->
   <script type="module" src="../js/controllers/actualizar-producto.controller.js"></script>
-  <script type="module" src="../js/utils/cookies.js"></script>
 
-  <!-- Control de sesión y logout -->
+  <!-- Control de sesión -->
   <script type="module">
     import { getCookie, borrarCookie } from '../js/utils/cookies.js';
 
@@ -44,18 +54,17 @@
       const cerrarBtn = document.getElementById('cerrar-sesion');
       const loginLink = document.getElementById('login-link');
 
-      // Mostrar usuario y botones
-      if (user) {
-        nombreSpan.textContent = `👤 ${user.nombre}`;
-        cerrarBtn.style.display = 'inline-block';
-        loginLink.style.display = 'none';
-      }
-
-      // Restringir acceso si no es admin
+      // Redirigir si no hay sesión o no es admin
       if (!user || user.rol !== 'admin') {
         alert('Acceso denegado. Solo administradores pueden ingresar aquí.');
         window.location.href = '../index.html';
+        return;
       }
+
+      // Mostrar datos en barra
+      nombreSpan.textContent = `👤 ${user.nombre}`;
+      cerrarBtn.style.display = 'inline-block';
+      loginLink.style.display = 'none';
 
       // Logout
       cerrarBtn?.addEventListener('click', () => {

@@ -1,61 +1,92 @@
+// js/controllers/home.controller.js
+
 import {
   obtenerTodosLosProductos,
   guardarProductosLista
 } from '../utils/indexedDB.js';
-import { obtenerSesion } from '../utils/fnStorages.js';
 
-const productosEjemplo = [
-  {
-    id: crypto.randomUUID(),
-    nombre: 'Chaqueta Matrix',
-    descripcion: 'Chaqueta oversize con cuello',
-    precio: 129.99,
-    imagen: 'img/producto3.png'
-  },
-  {
-    id: crypto.randomUUID(),
-    nombre: 'Zapatillas Null',
-    descripcion: 'Diseño unisex',
-    precio: 159.99,
-    imagen: 'img/producto4.png'
-  }
-];
+import { obtenerSesion } from '../utils/fnStorages.js';
+import { agregarProducto } from '../redux/carrito.slice.js';
+import { store } from '../redux/store.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // 1. Mostrar enlaces admin si está logueado
+  // Comprobamos si el usuario es admin y mostramos enlaces al panel
   const sesion = obtenerSesion();
   if (sesion?.rol === 'admin') {
-    document.getElementById('admin-link').style.display = 'inline-block';
-    document.getElementById('admin-link-mobile').style.display = 'block';
+    document.getElementById('admin-link')?.style.setProperty('display', 'inline-block');
+    document.getElementById('admin-link-mobile')?.style.setProperty('display', 'block');
   }
-  //para mostrar perfil de usuario
-if (sesion) {
-  document.getElementById('perfil-link').style.display = 'inline-block';
-  document.getElementById('perfil-link-mobile').style.display = 'block';
-}
 
-
-  // 2. Comprobar si ya hay productos
+  // Cargar productos desde IndexedDB o insertar ejemplo si está vacío
   let productos = await obtenerTodosLosProductos();
   if (!productos.length) {
-    await guardarProductosLista(productosEjemplo);
+    await guardarProductosLista([
+      {
+        id: crypto.randomUUID(),
+        nombre: 'Chaqueta Matrix',
+        descripcion: 'Chaqueta oversize con cuello',
+        precio: 129.99,
+        imagen: 'img/producto3.png'
+      },
+      {
+        id: crypto.randomUUID(),
+        nombre: 'Zapatillas Null',
+        descripcion: 'Diseño unisex',
+        precio: 159.99,
+        imagen: 'img/producto4.png'
+      }
+    ]);
     productos = await obtenerTodosLosProductos();
   }
 
-  // 3. Renderizar productos
-  renderProductos(productos);
-
-  // 4. Activar buscador
-  configurarBuscador(productos);
-
-  // 5. Filtros por precio y nombre (opcional)
-  configurarFiltros(productos);
+  // Inicializar la interfaz
+  crearControlesDeFiltro();         // Selects y buscador
+  renderProductos(productos);       // Mostrar productos
+  configurarBuscador(productos);    // Activar búsqueda
+  configurarFiltros(productos);     // Activar filtros
+  configurarBotonesAgregar();       // Activar botones "Agregar al carrito"
 });
 
+/**
+ * Crea los controles superiores: buscador, filtros y cambio de vista
+ */
+function crearControlesDeFiltro() {
+  const main = document.querySelector('main');
+  if (!main) return;
+
+  const controles = document.createElement('div');
+  controles.className = 'barra-controles';
+  controles.innerHTML = `
+    <select id="ordenar">
+      <option value="defecto">Ordenar</option>
+      <option value="az">A-Z</option>
+      <option value="za">Z-A</option>
+    </select>
+    <select id="precio">
+      <option value="defecto">Filtrar precio</option>
+      <option value="mayor">Mayor a menor</option>
+      <option value="menor">Menor a mayor</option>
+    </select>
+    <button id="vista-toggle">Cambiar Vista</button>
+    <input type="text" id="busqueda-productos" placeholder="Buscar productos..." class="busqueda-input" />
+  `;
+  main.prepend(controles);
+
+  // Alternar entre vista de grilla y lista
+  document.getElementById('vista-toggle').addEventListener('click', () => {
+    const grid = document.getElementById('contenedor-productos');
+    grid.classList.toggle('grid-productos');
+    grid.classList.toggle('vista-lista');
+  });
+}
+
+/**
+ * Pinta la lista de productos en pantalla
+ * @param {Array} lista
+ */
 function renderProductos(lista) {
   const contenedor = document.getElementById('contenedor-productos');
   const mensajeVacio = document.getElementById('mensaje-vacio');
-
   contenedor.innerHTML = '';
 
   if (!lista.length) {
@@ -77,58 +108,63 @@ function renderProductos(lista) {
     `;
     contenedor.appendChild(card);
   });
+
+  // Asegurarse de que los botones tengan eventos conectados
+  configurarBotonesAgregar();
 }
 
-function configurarBuscador(listaOriginal) {
+/**
+ * Activa la búsqueda por nombre o descripción
+ * @param {Array} productos
+ */
+function configurarBuscador(productos) {
   const buscador = document.getElementById('busqueda-productos');
-  if (!buscador) return;
-
-  buscador.addEventListener('input', () => {
+  buscador?.addEventListener('input', () => {
     const texto = buscador.value.toLowerCase();
-    const filtrados = listaOriginal.filter(p =>
-      p.nombre.toLowerCase().includes(texto) ||
-      p.descripcion.toLowerCase().includes(texto)
+    const filtrados = productos.filter(p =>
+      p.nombre.toLowerCase().includes(texto) || p.descripcion.toLowerCase().includes(texto)
     );
     renderProductos(filtrados);
   });
 }
 
+/**
+ * Activa los filtros de orden y precio
+ * @param {Array} productos
+ */
 function configurarFiltros(productos) {
-  const selectPrecio = document.getElementById('orden-precio');
-  const selectNombre = document.getElementById('orden-nombre');
+  const ordenarSelect = document.getElementById('ordenar');
+  const precioSelect = document.getElementById('precio');
 
-  if (!selectPrecio || !selectNombre) return;
-
-  selectPrecio.addEventListener('change', () => {
-    let ordenados = [...productos];
-    if (selectPrecio.value === 'asc') ordenados.sort((a, b) => a.precio - b.precio);
-    if (selectPrecio.value === 'desc') ordenados.sort((a, b) => b.precio - a.precio);
-    renderProductos(ordenados);
+  ordenarSelect?.addEventListener('change', () => {
+    let copia = [...productos];
+    if (ordenarSelect.value === 'az') copia.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    if (ordenarSelect.value === 'za') copia.sort((a, b) => b.nombre.localeCompare(a.nombre));
+    renderProductos(copia);
   });
 
-  selectNombre.addEventListener('change', () => {
-    let ordenados = [...productos];
-    if (selectNombre.value === 'az') ordenados.sort((a, b) => a.nombre.localeCompare(b.nombre));
-    if (selectNombre.value === 'za') ordenados.sort((a, b) => b.nombre.localeCompare(a.nombre));
-    renderProductos(ordenados);
+  precioSelect?.addEventListener('change', () => {
+    let copia = [...productos];
+    if (precioSelect.value === 'menor') copia.sort((a, b) => a.precio - b.precio);
+    if (precioSelect.value === 'mayor') copia.sort((a, b) => b.precio - a.precio);
+    renderProductos(copia);
   });
 }
-import { getCookie, borrarCookie } from '../utils/cookies.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const sesion = getCookie('sesionKora');
-  const usuario = sesion ? JSON.parse(sesion) : null;
+/**
+ * Conecta los botones "Agregar al carrito" a Redux
+ */
+function configurarBotonesAgregar() {
+  document.querySelectorAll('.btn-agregar').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      const productos = await obtenerTodosLosProductos();
+      const producto = productos.find(p => p.id === id);
 
-  if (usuario) {
-    document.getElementById('usuario-nombre').textContent = `Hola, ${usuario.nombre}`;
-    document.getElementById('cerrar-sesion').style.display = 'inline-block';
-  }
-
-  const btnLogout = document.getElementById('cerrar-sesion');
-  btnLogout?.addEventListener('click', () => {
-    borrarCookie('sesionKora');
-    localStorage.removeItem('sesionActiva');
-    alert('Sesión cerrada.');
-    window.location.href = '../index.html';
+      if (producto) {
+        store.dispatch(agregarProducto({ ...producto, cantidad: 1 }));
+        alert(`✅ ${producto.nombre} añadido al carrito.`);
+      }
+    });
   });
-});
+}

@@ -820,3 +820,65 @@ body.modo-oscuro #form-producto button {
   background-color: var(--acento);
   color: var(--negro);
 }
+
+/* MINI-CARRITO flotante - comportamiento dinámico */
+#mini-cart {
+  display: none;
+  position: absolute;
+  top: 75px;
+  right: 10px;
+  width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 1rem;
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  z-index: 9999;
+  border-radius: 8px;
+}
+
+#mini-cart.active {
+  display: block;
+}
+
+#mini-cart .item {
+  border-bottom: 1px solid var(--borde);
+  padding: 0.5rem 0;
+}
+
+#mini-cart .item:last-child {
+  border-bottom: none;
+}
+
+#mini-cart .item h4 {
+  font-size: 0.95rem;
+  margin: 0 0 4px 0;
+}
+
+#mini-cart .item p {
+  font-size: 0.85rem;
+  margin: 2px 0;
+  color: var(--gris);
+}
+
+#mini-cart .mini-cart-total {
+  text-align: right;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+/* Modo oscuro del mini carrito */
+body.modo-oscuro #mini-cart {
+  background-color: #1f1f1f;
+  color: var(--blanco);
+  border-color: #444;
+}
+
+body.modo-oscuro #mini-cart .item p {
+  color: #ccc;
+}
+
+body.modo-oscuro #mini-cart .mini-cart-total {
+  color: var(--acento);
+}

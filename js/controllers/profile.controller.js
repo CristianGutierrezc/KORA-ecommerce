@@ -1,34 +1,56 @@
 // js/controllers/profile.controller.js
 import { getCookie, setCookie } from '../utils/cookies.js';
+import { validarEmail, validarPassword } from '../utils/validaciones.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const cookie = getCookie('sesionKora');
-  const usuario = cookie ? JSON.parse(cookie) : null;
+  const form = document.getElementById('form-perfil');
 
-  if (!usuario) {
-    alert('Debes iniciar sesión primero.');
-    window.location.href = '../pages/form-login.html';
-    return;
+  // Cargar sesión desde cookie
+  const sesion = getCookie('sesionKora');
+  const user = sesion ? JSON.parse(sesion) : null;
+
+  // Precargar valores si hay usuario
+  if (user) {
+    document.getElementById('nombre').value = user.nombre;
+    document.getElementById('email').value = user.email;
   }
 
-  // Cargar datos actuales
-  document.getElementById('nombre').value = usuario.nombre || '';
-  document.getElementById('email').value = usuario.email || '';
-  document.getElementById('password').value = '';
-
-  // Guardar cambios
-  const form = document.getElementById('form-perfil');
+  // Evento de envío del formulario
   form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    const nuevoUsuario = {
-      ...usuario,
-      nombre: document.getElementById('nombre').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      password: document.getElementById('password').value.trim()
+    // Capturar nuevos datos
+    const nuevoNombre = document.getElementById('nombre').value.trim();
+    const nuevoEmail = document.getElementById('email').value.trim().toLowerCase();
+    const nuevaPassword = document.getElementById('password').value.trim();
+
+    // Validaciones básicas
+    if (!nuevoNombre) {
+      alert('El nombre no puede estar vacío.');
+      return;
+    }
+
+    if (!validarEmail(nuevoEmail)) {
+      alert('Introduce un correo válido.');
+      return;
+    }
+
+    if (!validarPassword(nuevaPassword)) {
+      alert('La contraseña debe tener al menos 4 caracteres.');
+      return;
+    }
+
+    // Crear nuevo objeto actualizado
+    const usuarioActualizado = {
+      ...user,
+      nombre: nuevoNombre,
+      email: nuevoEmail,
+      password: nuevaPassword
     };
 
-    setCookie('sesionKora', JSON.stringify(nuevoUsuario), 1);
+    // Guardar en cookie actualizada
+    setCookie('sesionKora', JSON.stringify(usuarioActualizado));
     alert('Perfil actualizado correctamente.');
+    window.location.href = '../index.html';
   });
 });

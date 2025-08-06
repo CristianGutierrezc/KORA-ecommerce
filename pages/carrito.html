@@ -7,29 +7,56 @@
   <link rel="stylesheet" href="../css/styles.css" />
 </head>
 <body>
+
   <header>
     <nav class="navbar">
       <div class="logo">KŌRA</div>
       <ul class="nav-links">
-        <li><a href="../index.html">Volver a la tienda</a></li>
+        <li><a href="../index.html" class="btn">← Volver a la tienda</a></li>
       </ul>
     </nav>
   </header>
 
   <main>
-    <a href="../index.html" class="btn-volver-movil">← Volver a la tienda</a>
+    <h2 style="text-align:center; margin: 2rem 0;">Tu carrito</h2>
 
-    <h2 style="text-align:center; margin-top: 2rem;">Tu carrito</h2>
-    
-    <section id="carrito-contenido" class="grid-productos" style="padding:2rem;"></section>
+    <!-- Contenedor donde se inyectan los productos -->
+    <section id="carrito-contenido" class="grid-productos"></section>
 
-    <div style="text-align: center; margin-bottom: 2rem;">
+    <!-- Total y botones -->
+    <div style="text-align: center; margin: 2rem 0;">
       <p>Total: <strong id="total-final">0 €</strong></p>
-      <button id="finalizar-compra" class="btn-publicar">Finalizar compra</button>
+      <button id="finalizar-compra" class="btn">Finalizar compra</button>
+      <button id="vaciar-carrito" class="btn" style="margin-left: 1rem;">Vaciar carrito</button>
     </div>
   </main>
 
-  <!-- SCRIPTS NUEVOS -->
+  <!-- Botón modo oscuro flotante -->
+  <script>
+    const btnModo = document.createElement('button');
+    btnModo.id = 'toggle-dark-mode';
+    btnModo.textContent = '🌙';
+    document.body.appendChild(btnModo);
+    btnModo.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      btnModo.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+    });
+  </script>
+
+  <!-- Script del controlador del carrito -->
   <script type="module" src="../js/controllers/carrito.controller.js"></script>
+
+  <!-- Script adicional para finalizar compra -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnFinalizar = document.getElementById('finalizar-compra');
+      btnFinalizar?.addEventListener('click', () => {
+        alert('Gracias por tu compra. ¡Procesaremos tu pedido!');
+        localStorage.removeItem('reduxCarrito'); // Limpiar storage del carrito
+        location.reload(); // Recarga para ver carrito vacío
+      });
+    });
+  </script>
+
 </body>
 </html>

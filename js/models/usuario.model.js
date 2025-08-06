@@ -1,7 +1,4 @@
 // js/models/usuario.model.js
-
-const CLAVE_USUARIOS = 'usuariosKora';
-
 const mockUsuarios = [
   {
     nombre: 'Admin',
@@ -18,39 +15,11 @@ const mockUsuarios = [
 ];
 
 /**
- * Devuelve los usuarios almacenados.
- * Si no hay, carga los mocks por primera vez.
- * @returns {Array}
- */
-export function obtenerUsuarios() {
-  const almacenados = JSON.parse(localStorage.getItem(CLAVE_USUARIOS));
-
-  if (almacenados && almacenados.length > 0) {
-    return almacenados;
-  } else {
-    // Guarda los mocks y los devuelve
-    localStorage.setItem(CLAVE_USUARIOS, JSON.stringify(mockUsuarios));
-    return mockUsuarios;
-  }
-}
-
-/**
- * Agrega un nuevo usuario.
- * @param {Object} usuario
- */
-export function agregarUsuario(usuario) {
-  const usuarios = obtenerUsuarios();
-  usuarios.push(usuario);
-  localStorage.setItem(CLAVE_USUARIOS, JSON.stringify(usuarios));
-}
-
-/**
- * Verifica si las credenciales coinciden con un usuario registrado.
+ * Verifica si el email y contraseña coinciden con algún usuario mock
  * @param {string} email
  * @param {string} password
  * @returns {Object|null}
  */
-export function loginUsuario(email, password) {
-  const usuarios = obtenerUsuarios();
-  return usuarios.find(u => u.email === email && u.password === password) || null;
+export function validarCredenciales(email, password) {
+  return mockUsuarios.find(u => u.email === email && u.password === password) || null;
 }

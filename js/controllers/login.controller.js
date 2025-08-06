@@ -1,45 +1,49 @@
+// js/controllers/login.controller.js
 
+import { validarCredenciales } from '../models/usuario.model.js';
 import { setCookie } from '../utils/cookies.js';
+import { validarEmail, validarPassword } from '../utils/validaciones.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('form-login');
 
+  if (!form) return;
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const email = document.getElementById('email').value.trim().toLowerCase();
-    const password = document.getElementById('password').value.trim();
 
-    const usuariosMock = [
-      {
-        nombre: 'Administrador',
-        email: 'cristianguti.93@gmail.com',
-        password: '1234',
-        rol: 'admin'
-      },
-      {
-        nombre: 'Usuario Regular',
-        email: 'usuario@kora.com',
-        password: 'demo123',
-        rol: 'usuario'
-      }
-    ];
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
 
-    const usuario = usuariosMock.find(
-      u => u.email === email && u.password === password
-    );
+    const email = emailInput.value.trim().toLowerCase();
+    const password = passwordInput.value.trim();
 
-    if (usuario) {
-      setCookie('sesionKora', JSON.stringify(usuario), 1);
-      alert(`Bienvenido, ${usuario.nombre}`);
-      
-      if (usuario.rol === 'admin') {
-        window.location.href = '../pages/dashboard.html';
-      } else {
-        window.location.href = '../index.html';
-      }
-
-    } else {
-      alert('Credenciales incorrectas o no autorizadas.');
+    // Validación visual básica
+    if (!validarEmail(email)) {
+      alert('Introduce un correo electrónico válido.');
+      emailInput.focus();
+      return;
     }
+
+    if (!validarPassword(password)) {
+      alert('La contraseña debe tener al menos 4 caracteres.');
+      passwordInput.focus();
+      return;
+    }
+
+    // Validación con mock de usuarios
+    const usuario = validarCredenciales(email, password);
+
+    if (!usuario) {
+      alert('Credenciales incorrectas o no autorizadas.');
+      return;
+    }
+
+    // Guardar sesión en cookie
+    setCookie('sesionKora', JSON.stringify(usuario), 1);
+
+    alert(`Bienvenido, ${usuario.nombre}`);
+    const destino = usuario.rol === 'admin' ? 'dashboard.html' : '../index.html';
+    window.location.href = destino;
   });
 });
