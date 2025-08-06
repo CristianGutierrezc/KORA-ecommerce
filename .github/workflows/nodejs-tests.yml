@@ -20,7 +20,10 @@ jobs:
           node-version: '20'
 
       - name: Instalar dependencias
-        run: npm install
+        run: npm ci
+
+      - name: Dar permisos a Jest
+        run: chmod +x ./node_modules/.bin/jest
 
       - name: Ejecutar tests con Jest
-        run: npx jest
+        run: npm test
