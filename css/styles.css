@@ -200,6 +200,14 @@ body.modo-oscuro .btn-publicar:hover {
   border-color: var(--acento);
 }
 
+/* Botón fijo para modo oscuro */
+.btn-modo {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1000;
+}
+
 /* GRID DE PRODUCTOS */
 .grid-productos {
   display: grid;

@@ -4,6 +4,7 @@ import {
   guardarProducto
 } from '../utils/indexedDB.js';
 import { getCookie } from '../utils/cookies.js';
+import { validarProducto } from '../utils/validarProducto.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // Validar sesión y rol

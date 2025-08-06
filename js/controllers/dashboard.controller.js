@@ -6,6 +6,7 @@ import {
   guardarProductosLista,
   eliminarProducto
 } from '../utils/indexedDB.js';
+import { validarProducto } from '../utils/validarProducto.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const sesion = obtenerSesion();
@@ -86,6 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Crear o editar producto
   form.addEventListener('submit', async e => {
     e.preventDefault();
+    e.preventDefault();
 
     const nuevoProducto = {
       id: idField.value || crypto.randomUUID(),
@@ -98,6 +100,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!camposValidos(nuevoProducto)) return;
 
+    await guardarProducto(nuevoProducto);
+    adminProductos = await obtenerTodosLosProductos();
+    form.reset();
+    renderLista();
+  });
     await guardarProducto(nuevoProducto);
     adminProductos = await obtenerTodosLosProductos();
     form.reset();
