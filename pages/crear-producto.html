@@ -64,6 +64,21 @@
       });
     });
   </script>
+<script>
+  const btnModo = document.createElement('button');
+  btnModo.id = 'toggle-dark-mode';
+  btnModo.textContent = document.cookie.includes('modo=oscuro') ? '☀️' : '🌙';
+  document.body.appendChild(btnModo);
 
+  if (document.cookie.includes('modo=oscuro')) {
+    document.body.classList.add('modo-oscuro');
+  }
+
+  btnModo.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('modo-oscuro');
+    document.cookie = `modo=${isDark ? 'oscuro' : 'claro'};path=/`;
+    btnModo.textContent = isDark ? '☀️' : '🌙';
+  });
+</script>
 </body>
 </html>

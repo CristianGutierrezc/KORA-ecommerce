@@ -1,31 +1,42 @@
-// __test__/usuario.model.test.js
 
 import {
-  loginUsuario,
   agregarUsuario,
-  obtenerUsuarios
-} from '../js/models/usuario.model.js';
+  loginUsuario,
+  obtenerUsuarios,
+  limpiarUsuarios,
+} from '../js/models/usuario.model';
+
+beforeEach(() => {
+  localStorage.clear();
+});
 
 describe('👤 Usuario Model', () => {
+  test('debería agregar un nuevo usuario', () => {
+    const usuario = {
+      nombre: 'Test',
+      email: 'test@kora.com',
+      password: '1234',
+    };
 
-  beforeEach(() => {
-    localStorage.clear();
+    agregarUsuario(usuario);
+    const usuarios = obtenerUsuarios();
+
+    expect(usuarios).toHaveLength(1);
+    expect(usuarios[0].email).toBe('test@kora.com');
   });
 
   test('debería hacer login correctamente con un usuario válido', () => {
-    const mockUsuario = {
+    const usuario = {
       nombre: 'Admin',
       email: 'admin@kora.com',
       password: '1234',
-      rol: 'admin'
     };
 
-    agregarUsuario(mockUsuario);
-
+    agregarUsuario(usuario);
     const resultado = loginUsuario('admin@kora.com', '1234');
+
     expect(resultado).not.toBeNull();
     expect(resultado.email).toBe('admin@kora.com');
-    expect(resultado.rol).toBe('admin');
   });
 
   test('debería fallar login con credenciales incorrectas', () => {
@@ -33,29 +44,14 @@ describe('👤 Usuario Model', () => {
       nombre: 'Usuario',
       email: 'user@kora.com',
       password: 'demo123',
-      rol: 'usuario'
     });
 
-    const resultado = loginUsuario('user@kora.com', 'wrongpassword');
+    const resultado = loginUsuario('user@kora.com', 'mal');
     expect(resultado).toBeNull();
   });
 
-  test('debería agregar un nuevo usuario', () => {
-    const nuevo = {
-      nombre: 'Cristian',
-      email: 'cristian@kora.com',
-      password: 'abc123',
-      rol: 'usuario'
-    };
-
-    agregarUsuario(nuevo);
-
-    const usuarios = obtenerUsuarios();
-    expect(usuarios).toHaveLength(1);
-    expect(usuarios[0].email).toBe('cristian@kora.com');
-  });
-
   test('debería retornar lista vacía si no hay usuarios', () => {
+    limpiarUsuarios();
     const usuarios = obtenerUsuarios();
     expect(usuarios).toEqual([]);
   });

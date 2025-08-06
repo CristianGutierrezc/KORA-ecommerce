@@ -1,6 +1,6 @@
 // js/components/minicart.js
 import { store } from '../redux/store.js';
-import { eliminarDelCarrito } from '../redux/carrito.slice.js';
+import { eliminarProducto } from '../redux/carrito.slice.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const miniCart = document.getElementById('mini-cart');
@@ -8,49 +8,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!miniCart || !cartIcon) return;
 
-  // Alternar visibilidad del mini carrito
+  // Mostrar u ocultar el mini carrito
   cartIcon.addEventListener('click', () => {
     miniCart.classList.toggle('visible');
     renderMiniCart();
   });
 
-  // Renderizar productos del carrito
-  const renderMiniCart = () => {
-    const estado = store.getState();
-    const productos = estado.carrito.productos;
+  function renderMiniCart() {
+    const carrito = store.getState().carrito.productos;
+    miniCart.innerHTML = '';
 
-    if (productos.length === 0) {
-      miniCart.innerHTML = '<p class="empty-cart">Carrito vacío</p>';
+    if (carrito.length === 0) {
+      miniCart.innerHTML = '<p style="text-align:center;">Carrito vacío</p>';
       return;
     }
 
-    miniCart.innerHTML = `
-      <h3>Tu carrito</h3>
-      <ul class="mini-cart-list">
-        ${productos.map(p => `
-          <li>
-            <span>${p.nombre}</span>
-            <button class="btn-eliminar" data-id="${p.id}">❌</button>
-          </li>
-        `).join('')}
-      </ul>
-      <a href="pages/carrito.html" class="btn-ver-carrito">Ver carrito completo</a>
-    `;
+    carrito.forEach(p => {
+      miniCart.innerHTML += `
+        <div class="item">
+          <h4>${p.nombre}</h4>
+          <p>${p.cantidad} x ${p.precio} €</p>
+          <p>Subtotal: ${(p.precio * p.cantidad).toFixed(2)} €</p>
+          <button class="btn-eliminar" data-id="${p.id}">Eliminar</button>
+        </div>
+      `;
+    });
+
+    const total = carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
+    miniCart.innerHTML += `<p class="mini-cart-total">Total: ${total.toFixed(2)} €</p>`;
 
     document.querySelectorAll('.btn-eliminar').forEach(btn => {
       btn.addEventListener('click', () => {
-        const id = parseInt(btn.dataset.id);
-        store.dispatch(eliminarDelCarrito(id));
-        renderMiniCart(); // actualizar al instante
+        store.dispatch(eliminarProducto(btn.dataset.id));
       });
     });
-  };
+  }
 
-  // Suscribirse a Redux para actualizar contador y mini carrito
-  store.subscribe(() => {
-    const productos = store.getState().carrito.productos;
-    const count = productos.reduce((acc, p) => acc + p.cantidad, 0);
-    document.getElementById('cart-count').textContent = count;
-    renderMiniCart();
-  });
+  store.subscribe(renderMiniCart);
 });
