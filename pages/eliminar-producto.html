@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Eliminar producto - KŌRA</title>
   <link rel="stylesheet" href="../css/styles.css" />
-
 </head>
 <body>
 
@@ -21,7 +20,7 @@
     <h2 style="text-align: center;">Eliminar producto</h2>
 
     <div id="detalle-producto" class="producto-detalle" style="margin-bottom: 2rem;">
-      <!-- Aquí se mostrará el producto con JS -->
+      <!-- Aquí se insertará el producto con JS -->
     </div>
 
     <div style="text-align: center;">
@@ -31,9 +30,8 @@
     </div>
   </main>
 
-  <!-- Controlador para eliminar -->
+  <!-- Controlador principal -->
   <script type="module" src="../js/controllers/eliminar-producto.controller.js"></script>
-  <script type="module" src="../js/utils/cookies.js"></script>
 
   <!-- Control de sesión y logout -->
   <script type="module">
@@ -53,12 +51,10 @@
         return;
       }
 
-      // Mostrar datos de sesión
       nombreSpan.textContent = `👤 ${user.nombre}`;
       cerrarBtn.style.display = 'inline-block';
       loginLink.style.display = 'none';
 
-      // Logout
       cerrarBtn?.addEventListener('click', () => {
         borrarCookie('sesionKora');
         localStorage.removeItem('sesionActiva');

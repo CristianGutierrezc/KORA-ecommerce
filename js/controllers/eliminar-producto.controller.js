@@ -4,7 +4,7 @@ import { eliminarProducto, obtenerTodosLosProductos } from '../utils/indexedDB.j
 import { getCookie } from '../utils/cookies.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Verificamos si el usuario es admin
+  // ⚙️ Verificar sesión de administrador
   const sesion = getCookie('sesionKora');
   const user = sesion ? JSON.parse(sesion) : null;
 
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // Obtener ID del producto desde la URL
+  // 📦 Obtener ID del producto desde la URL
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
 
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // Buscar el producto por su ID
+  // 🔎 Buscar el producto por ID en IndexedDB
   const productos = await obtenerTodosLosProductos();
   const producto = productos.find(p => p.id === id);
 
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // Mostrar detalles del producto en pantalla
+  // 🖼️ Renderizar el producto en el DOM
   const detalle = document.getElementById('detalle-producto');
   detalle.innerHTML = `
     <div class="producto-card">
@@ -45,9 +45,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     </div>
   `;
 
-  // Botón para confirmar la eliminación
+  // 🗑️ Confirmar eliminación del producto
   const btnEliminar = document.getElementById('confirmar-eliminacion');
-
   btnEliminar?.addEventListener('click', async () => {
     const confirmado = confirm(`¿Eliminar definitivamente el producto "${producto.nombre}"?`);
 

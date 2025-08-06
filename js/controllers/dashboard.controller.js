@@ -1,18 +1,19 @@
 // js/controllers/dashboard.controller.js
-import { obtenerSesion } from '../utils/fnStorages.js';
+
+import { getCookie } from '../utils/cookies.js';
 import {
   obtenerTodosLosProductos,
   guardarProducto,
   guardarProductosLista,
   eliminarProducto
 } from '../utils/indexedDB.js';
-import { validarProducto } from '../utils/validarProducto.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const sesion = obtenerSesion();
+  // Verificación de acceso con cookie
+  const sesion = getCookie('usuario');
+  const user = sesion ? JSON.parse(sesion) : null;
 
-  // Verificación de acceso
-  if (!sesion || sesion.rol !== 'admin') {
+  if (!user || user.rol !== 'admin') {
     alert('Acceso denegado. Solo administradores pueden ingresar aquí.');
     window.location.href = '../index.html';
     return;
@@ -30,10 +31,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnVaciar = document.getElementById('vaciar-lista');
   const btnPublicar = document.getElementById('publicar-tienda');
 
-  // Productos del admin (simula backend personal)
+  // Productos del panel admin (IndexedDB simulando backend)
   let adminProductos = await obtenerTodosLosProductos();
 
-  // Renderiza productos en pantalla
+  // Mostrar productos
+  renderLista();
+
+  // Renderizar productos
   function renderLista() {
     lista.innerHTML = '';
 
@@ -57,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Validaciones del formulario
+  // Validación manual del formulario
   function camposValidos(p) {
     if (!p.nombre || !p.descripcion || !p.precio || !p.imagen) {
       alert('Todos los campos son obligatorios.');
@@ -84,9 +88,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     return true;
   }
 
-  // Crear o editar producto
+  // Guardar producto (crear o editar)
   form.addEventListener('submit', async e => {
-    e.preventDefault();
     e.preventDefault();
 
     const nuevoProducto = {
@@ -95,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       descripcion: descripcion.value.trim(),
       precio: parseFloat(precio.value),
       imagen: imagen.value.trim(),
-      autor: sesion.email
+      autor: user.email
     };
 
     if (!camposValidos(nuevoProducto)) return;
@@ -105,13 +108,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     form.reset();
     renderLista();
   });
-    await guardarProducto(nuevoProducto);
-    adminProductos = await obtenerTodosLosProductos();
-    form.reset();
-    renderLista();
-  });
 
-  // Botón: cargar productos de ejemplo
+  // Botón: Cargar productos de ejemplo
   btnCargar.addEventListener('click', async () => {
     if (adminProductos.length > 0) {
       alert('Ya tienes productos cargados.');
@@ -125,7 +123,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         descripcion: 'Chaqueta oversize con cuello futurista.',
         precio: 129.99,
         imagen: 'img/producto3.png',
-        autor: sesion.email
+        autor: user.email
       },
       {
         id: crypto.randomUUID(),
@@ -133,7 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         descripcion: 'Zapatillas unisex diseño digital.',
         precio: 159.99,
         imagen: 'img/producto4.png',
-        autor: sesion.email
+        autor: user.email
       }
     ];
 
@@ -142,7 +140,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderLista();
   });
 
-  // Botón: vaciar productos
+  // Botón: Vaciar productos
   btnVaciar.addEventListener('click', async () => {
     if (confirm('¿Vaciar todos los productos del panel admin?')) {
       for (const producto of adminProductos) {
@@ -153,7 +151,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // Botón: publicar (ya están guardados en IndexedDB)
+  // Botón: Publicar productos (simulado, ya están en IndexedDB)
   btnPublicar.addEventListener('click', () => {
     if (adminProductos.length === 0) {
       alert('No hay productos para publicar.');
@@ -175,7 +173,4 @@ document.addEventListener('DOMContentLoaded', async () => {
   closeAdminMenu?.addEventListener("click", () => {
     adminMenu.classList.remove("activo");
   });
-
-  // Mostrar productos
-  renderLista();
 });

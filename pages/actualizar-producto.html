@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Actualizar producto - KŌRA</title>
   <link rel="stylesheet" href="../css/styles.css" />
- 
 </head>
-<body>
+<body class="admin-page">
 
   <!-- Encabezado de sesión -->
   <header style="padding: 1rem 2rem;">
@@ -54,20 +53,19 @@
       const cerrarBtn = document.getElementById('cerrar-sesion');
       const loginLink = document.getElementById('login-link');
 
-      // Redirigir si no hay sesión o no es admin
       if (!user || user.rol !== 'admin') {
         alert('Acceso denegado. Solo administradores pueden ingresar aquí.');
         window.location.href = '../index.html';
         return;
       }
 
-      // Mostrar datos en barra
+      // Mostrar sesión activa
       nombreSpan.textContent = `👤 ${user.nombre}`;
       cerrarBtn.style.display = 'inline-block';
       loginLink.style.display = 'none';
 
-      // Logout
-      cerrarBtn?.addEventListener('click', () => {
+      // Logout funcional
+      cerrarBtn.addEventListener('click', () => {
         borrarCookie('sesionKora');
         localStorage.removeItem('sesionActiva');
         window.location.href = '../index.html';

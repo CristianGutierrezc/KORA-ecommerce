@@ -1,4 +1,3 @@
-
 import {
   obtenerTodosLosProductos,
   guardarProducto
@@ -7,7 +6,7 @@ import { getCookie } from '../utils/cookies.js';
 import { validarProducto } from '../utils/validarProducto.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Validar sesión y rol
+  // Validar sesión
   const sesion = getCookie('sesionKora');
   const user = sesion ? JSON.parse(sesion) : null;
 
@@ -17,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // Obtener el ID del producto desde la URL
+  // Obtener ID del producto por URL
   const urlParams = new URLSearchParams(window.location.search);
   const id = urlParams.get('id');
 
@@ -27,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // Buscar el producto por su ID en IndexedDB
+  // Obtener producto desde IndexedDB
   const productos = await obtenerTodosLosProductos();
   const producto = productos.find(p => p.id === id);
 
@@ -37,44 +36,40 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // Rellenar los campos del formulario con los datos del producto
-  document.getElementById('producto-id').value = producto.id;
-  document.getElementById('nombre').value = producto.nombre;
-  document.getElementById('descripcion').value = producto.descripcion;
-  document.getElementById('precio').value = producto.precio;
-  document.getElementById('imagen').value = producto.imagen;
+  // Referencias al DOM
+  const form = document.getElementById('form-actualizar-producto');
+  const nombre = document.getElementById('nombre');
+  const descripcion = document.getElementById('descripcion');
+  const precio = document.getElementById('precio');
+  const imagen = document.getElementById('imagen');
+  const idField = document.getElementById('producto-id');
 
-  // Evento de envío del formulario
-  document.getElementById('form-actualizar-producto').addEventListener('submit', async (e) => {
+  // Rellenar el formulario con el producto
+  idField.value = producto.id;
+  nombre.value = producto.nombre;
+  descripcion.value = producto.descripcion;
+  precio.value = producto.precio;
+  imagen.value = producto.imagen;
+
+  // Evento submit
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // Obtener datos del formulario
     const actualizado = {
       id: producto.id,
-      nombre: document.getElementById('nombre').value.trim(),
-      descripcion: document.getElementById('descripcion').value.trim(),
-      precio: parseFloat(document.getElementById('precio').value),
-      imagen: document.getElementById('imagen').value.trim(),
+      nombre: nombre.value.trim(),
+      descripcion: descripcion.value.trim(),
+      precio: parseFloat(precio.value),
+      imagen: imagen.value.trim(),
       autor: producto.autor || user.email
     };
 
-    // Validaciones
-    if (!actualizado.nombre || !actualizado.descripcion || !actualizado.precio || !actualizado.imagen) {
-      alert('Todos los campos son obligatorios.');
+    const resultado = validarProducto(actualizado, productos);
+    if (!resultado.valido) {
+      alert(resultado.mensaje);
       return;
     }
 
-    if (actualizado.descripcion.length > 150) {
-      alert('La descripción no puede superar los 150 caracteres.');
-      return;
-    }
-
-    if (!/\.(jpg|jpeg|png|webp|gif)$/i.test(actualizado.imagen)) {
-      alert('La URL debe ser válida y terminar en .jpg, .png, .gif, etc.');
-      return;
-    }
-
-    // Guardar producto actualizado en IndexedDB
     await guardarProducto(actualizado);
     alert('Producto actualizado correctamente.');
     window.location.href = 'dashboard.html';

@@ -1,4 +1,3 @@
-// js/controllers/home.controller.js
 
 import {
   obtenerTodosLosProductos,
@@ -10,14 +9,14 @@ import { agregarProducto } from '../redux/carrito.slice.js';
 import { store } from '../redux/store.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Comprobamos si el usuario es admin y mostramos enlaces al panel
+  // Mostrar enlaces del panel si es admin
   const sesion = obtenerSesion();
   if (sesion?.rol === 'admin') {
     document.getElementById('admin-link')?.style.setProperty('display', 'inline-block');
     document.getElementById('admin-link-mobile')?.style.setProperty('display', 'block');
   }
 
-  // Cargar productos desde IndexedDB o insertar ejemplo si está vacío
+  // Cargar productos desde IndexedDB o insertar ejemplos si está vacío
   let productos = await obtenerTodosLosProductos();
   if (!productos.length) {
     await guardarProductosLista([
@@ -39,12 +38,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     productos = await obtenerTodosLosProductos();
   }
 
-  // Inicializar la interfaz
+  // Inicializar interfaz
   crearControlesDeFiltro();         // Selects y buscador
   renderProductos(productos);       // Mostrar productos
   configurarBuscador(productos);    // Activar búsqueda
   configurarFiltros(productos);     // Activar filtros
-  configurarBotonesAgregar();       // Activar botones "Agregar al carrito"
 });
 
 /**
@@ -72,7 +70,7 @@ function crearControlesDeFiltro() {
   `;
   main.prepend(controles);
 
-  // Alternar entre vista de grilla y lista
+  // Alternar entre vista grilla y lista
   document.getElementById('vista-toggle').addEventListener('click', () => {
     const grid = document.getElementById('contenedor-productos');
     grid.classList.toggle('grid-productos');
@@ -81,7 +79,7 @@ function crearControlesDeFiltro() {
 }
 
 /**
- * Pinta la lista de productos en pantalla
+ * Pinta los productos en pantalla
  * @param {Array} lista
  */
 function renderProductos(lista) {
@@ -109,12 +107,11 @@ function renderProductos(lista) {
     contenedor.appendChild(card);
   });
 
-  // Asegurarse de que los botones tengan eventos conectados
-  configurarBotonesAgregar();
+  configurarBotonesAgregar(); // Solo aquí se debe ejecutar
 }
 
 /**
- * Activa la búsqueda por nombre o descripción
+ * Activa la búsqueda por texto
  * @param {Array} productos
  */
 function configurarBuscador(productos) {
@@ -129,7 +126,7 @@ function configurarBuscador(productos) {
 }
 
 /**
- * Activa los filtros de orden y precio
+ * Aplica filtros de orden y precio
  * @param {Array} productos
  */
 function configurarFiltros(productos) {
@@ -152,7 +149,7 @@ function configurarFiltros(productos) {
 }
 
 /**
- * Conecta los botones "Agregar al carrito" a Redux
+ * Conecta los botones "Agregar al carrito" al store Redux
  */
 function configurarBotonesAgregar() {
   document.querySelectorAll('.btn-agregar').forEach(btn => {

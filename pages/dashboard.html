@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin - KŌRA</title>
   <link rel="stylesheet" href="../css/styles.css" />
-  
 </head>
 <body class="admin-page">
 
@@ -61,16 +60,16 @@
     <section id="lista-admin" class="grid-productos" style="margin-top:2rem;"></section>
   </main>
 
-  <!-- CONTROLADOR JS -->
+  <!-- CONTROLADOR DE FUNCIONALIDAD -->
   <script type="module" src="../js/controllers/dashboard.controller.js"></script>
   <script type="module" src="../js/utils/cookies.js"></script>
 
-  <!-- CONTROL DE SESIÓN -->
+  <!-- CONTROL DE SESIÓN PARA ADMIN -->
   <script type="module">
     import { getCookie, borrarCookie } from '../js/utils/cookies.js';
 
     document.addEventListener('DOMContentLoaded', () => {
-      const sesion = getCookie('sesionKora');
+      const sesion = getCookie('usuario'); // nombre correcto de la cookie
       const user = sesion ? JSON.parse(sesion) : null;
 
       const nombreSpan = document.getElementById('usuario-nombre');
@@ -79,27 +78,25 @@
       const perfilLink = document.getElementById('perfil-link');
 
       if (!user || user.rol !== 'admin') {
-        // Redirigir si no es admin
+        // Redirige si no es admin
         window.location.href = '../index.html';
         return;
       }
 
-      // Mostrar datos
+      // Mostrar información del admin
       nombreSpan.textContent = `👤 ${user.nombre}`;
       cerrarBtn.style.display = 'inline-block';
       loginLink.style.display = 'none';
       perfilLink.style.display = 'inline-block';
 
-      // Logout
       cerrarBtn?.addEventListener('click', () => {
-        borrarCookie('sesionKora');
-        localStorage.removeItem('sesionActiva');
+        borrarCookie('usuario');
         window.location.href = '../index.html';
       });
     });
   </script>
 
-  <!-- MENÚ HAMBURGUESA -->
+  <!-- MENÚ HAMBURGUESA ADMIN -->
   <script>
     const toggleBtn = document.getElementById('admin-menu-toggle');
     const closeBtn = document.getElementById('admin-menu-close');
