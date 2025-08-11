@@ -3,17 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Iniciar sesión - KŌRA</title>
+  <title>Acceder - KŌRA</title>
   <link rel="stylesheet" href="../css/styles.css" />
-
 </head>
 <body>
 
   <main style="max-width: 500px; margin: auto; padding: 2rem;">
-    <h2 style="text-align: center;">Iniciar sesión</h2>
+    <h2 style="text-align: center;">Bienvenido a KŌRA</h2>
 
-    <!-- Formulario de login -->
-    <form id="form-login">
+    <!-- Pestañas -->
+    <div style="text-align: center; margin-bottom: 1rem;">
+      <button onclick="mostrar('login')" class="btn" id="btn-login-tab">Iniciar sesión</button>
+      <button onclick="mostrar('registro')" class="btn" id="btn-registro-tab">Registrarse</button>
+    </div>
+
+    <!-- Login -->
+    <form id="form-login" style="display: block;">
       <label for="email">Correo electrónico</label>
       <input type="email" id="email" class="form-input" required />
 
@@ -22,40 +27,53 @@
 
       <button type="submit" class="btn">Entrar</button>
     </form>
+
+    <!-- Registro -->
+    <form id="form-register" style="display: none;">
+      <label for="nombre">Nombre</label>
+      <input type="text" id="nombre" class="form-input" required />
+
+      <label for="emailRegistro">Correo electrónico</label>
+      <input type="email" id="emailRegistro" class="form-input" required />
+
+      <label for="passwordRegistro">Contraseña</label>
+      <input type="password" id="passwordRegistro" class="form-input" required />
+
+      <button type="submit" class="btn">Crear cuenta</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 1rem;">
+      <a href="../index.html" class="btn">← Volver a la tienda</a>
+    </div>
   </main>
 
-  <!-- Script del controlador de login -->
   <script type="module" src="../js/controllers/login.controller.js"></script>
+  <script type="module" src="../js/controllers/register.controller.js"></script>
 
-  <!-- Control de sesión (redirigir si ya hay cookie activa) -->
-  <script type="module">
-    import { getCookie } from '../js/utils/cookies.js';
+  <!-- Botón modo oscuro -->
+  <script>
+    const btnModo = document.createElement('button');
+    btnModo.id = 'toggle-dark-mode';
+    btnModo.textContent = document.cookie.includes('modo=oscuro') ? '☀️' : '🌙';
+    document.body.appendChild(btnModo);
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const sesion = getCookie('sesionKora');
-      const user = sesion ? JSON.parse(sesion) : null;
+    if (document.cookie.includes('modo=oscuro')) {
+      document.body.classList.add('modo-oscuro');
+    }
 
-      if (user) {
-        const destino = user.rol === 'admin' ? 'dashboard.html' : '../index.html';
-        window.location.href = destino;
-      }
+    btnModo.addEventListener('click', () => {
+      const isDark = document.body.classList.toggle('modo-oscuro');
+      document.cookie = `modo=${isDark ? 'oscuro' : 'claro'};path=/`;
+      btnModo.textContent = isDark ? '☀️' : '🌙';
     });
   </script>
-<script>
-  const btnModo = document.createElement('button');
-  btnModo.id = 'toggle-dark-mode';
-  btnModo.textContent = document.cookie.includes('modo=oscuro') ? '☀️' : '🌙';
-  document.body.appendChild(btnModo);
 
-  if (document.cookie.includes('modo=oscuro')) {
-    document.body.classList.add('modo-oscuro');
-  }
-
-  btnModo.addEventListener('click', () => {
-    const isDark = document.body.classList.toggle('modo-oscuro');
-    document.cookie = `modo=${isDark ? 'oscuro' : 'claro'};path=/`;
-    btnModo.textContent = isDark ? '☀️' : '🌙';
-  });
-</script>
+  <!-- Toggle entre login/registro -->
+  <script>
+    function mostrar(tab) {
+      document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('form-register').style.display = tab === 'registro' ? 'block' : 'none';
+    }
+  </script>
 </body>
 </html>

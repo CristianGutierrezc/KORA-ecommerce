@@ -1,4 +1,3 @@
-// js/controllers/login.controller.js
 
 import { validarCredenciales } from '../models/usuario.model.js';
 import { setCookie } from '../utils/cookies.js';
@@ -18,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = emailInput.value.trim().toLowerCase();
     const password = passwordInput.value.trim();
 
-    // Validación visual básica
+    // Validación visual
     if (!validarEmail(email)) {
       alert('Introduce un correo electrónico válido.');
       emailInput.focus();
@@ -39,10 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Guardar sesión en cookie
-    setCookie('sesionKora', JSON.stringify(usuario), 1);
+    // Guardar sesión correctamente
+    setCookie('usuario', JSON.stringify(usuario), 1); // Nombre debe ser 'usuario'
 
     alert(`Bienvenido, ${usuario.nombre}`);
+
+    // Redirección según rol
     const destino = usuario.rol === 'admin' ? 'dashboard.html' : '../index.html';
     window.location.href = destino;
   });

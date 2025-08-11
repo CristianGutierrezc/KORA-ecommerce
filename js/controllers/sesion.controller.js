@@ -1,47 +1,67 @@
-
 import { getCookie, borrarCookie } from '../utils/cookies.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Elementos del menú principal
-  const usuarioNombre = document.getElementById('usuario-nombre');
-  const loginLink = document.getElementById('login-link');
-  const cerrarSesion = document.getElementById('cerrar-sesion');
-  const adminLink = document.getElementById('admin-link');
-  const perfilLink = document.getElementById('perfil-link');
+const nombreUsuario = document.getElementById('usuario-nombre');
+const loginLink = document.getElementById('login-link');
+const loginLinkMobile = document.getElementById('login-link-mobile');
+const cerrarSesion = document.getElementById('cerrar-sesion');
+const cerrarSesionMobile = document.getElementById('cerrar-sesion-mobile');
+const adminLink = document.getElementById('admin-link');
+const adminLinkMobile = document.getElementById('admin-link-mobile');
+const perfilLink = document.getElementById('perfil-link');
+const perfilLinkMobile = document.getElementById('perfil-link-mobile');
 
-  // Elementos del menú móvil
-  const loginLinkMobile = document.getElementById('login-link-mobile');
-  const cerrarSesionMobile = document.getElementById('cerrar-sesion-mobile');
-  const adminLinkMobile = document.getElementById('admin-link-mobile');
-  const perfilLinkMobile = document.getElementById('perfil-link-mobile');
+// Leer cookie de sesión
+const usuario = getCookie('usuario');
 
-  // Leer la cookie de sesión
-  const sesion = getCookie('sesionKora');
-  if (sesion) {
-    const usuario = JSON.parse(sesion);
+if (usuario) {
+  const datos = JSON.parse(usuario);
+  if (nombreUsuario) nombreUsuario.textContent = datos.nombre;
 
-    // Mostrar nombre de usuario en barra
-    if (usuarioNombre) usuarioNombre.textContent = usuario.nombre;
+  if (loginLink) loginLink.style.display = 'none';
+  if (loginLinkMobile) loginLinkMobile.style.display = 'none';
+  if (cerrarSesion) cerrarSesion.style.display = 'inline';
+  if (cerrarSesionMobile) cerrarSesionMobile.style.display = 'inline';
 
-    // Ocultar login y mostrar cerrar sesión (versión escritorio)
-    if (loginLink) loginLink.style.display = 'none';
-    if (cerrarSesion) cerrarSesion.style.display = 'inline-block';
-    if (usuario.rol === 'admin' && adminLink) adminLink.style.display = 'inline-block';
-    if (perfilLink) perfilLink.style.display = 'inline-block';
-
-    // Ocultar login y mostrar cerrar sesión (versión móvil)
-    if (loginLinkMobile) loginLinkMobile.style.display = 'none';
-    if (cerrarSesionMobile) cerrarSesionMobile.style.display = 'block';
-    if (usuario.rol === 'admin' && adminLinkMobile) adminLinkMobile.style.display = 'block';
-    if (perfilLinkMobile) perfilLinkMobile.style.display = 'block';
+  if (datos.rol === 'admin') {
+    if (adminLink) adminLink.style.display = 'inline';
+    if (adminLinkMobile) adminLinkMobile.style.display = 'inline';
+  } else {
+    if (perfilLink) perfilLink.style.display = 'inline';
+    if (perfilLinkMobile) perfilLinkMobile.style.display = 'inline';
   }
+}
 
-  // Función de cerrar sesión (ambas versiones)
-  const cerrarSesionGlobal = () => {
-    borrarCookie('sesionKora');
-    window.location.href = 'form-login.html'; // redirige siempre al login
-  };
+// Redirección manual del botón login
+if (loginLink) {
+  loginLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.href = 'pages/form-login.html';
+  });
+}
 
-  if (cerrarSesion) cerrarSesion.addEventListener('click', cerrarSesionGlobal);
-  if (cerrarSesionMobile) cerrarSesionMobile.addEventListener('click', cerrarSesionGlobal);
-});
+if (loginLinkMobile) {
+  loginLinkMobile.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.href = 'pages/form-login.html';
+  });
+}
+
+// Botón cerrar sesión
+function cerrarSesionUsuario() {
+  borrarCookie('usuario');
+  window.location.reload();
+}
+
+if (cerrarSesion) {
+  cerrarSesion.addEventListener('click', (e) => {
+    e.preventDefault();
+    cerrarSesionUsuario();
+  });
+}
+
+if (cerrarSesionMobile) {
+  cerrarSesionMobile.addEventListener('click', (e) => {
+    e.preventDefault();
+    cerrarSesionUsuario();
+  });
+}

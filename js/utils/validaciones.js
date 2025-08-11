@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </select>
     <button id="vista-toggle">Cambiar Vista</button>
     <input type="text" id="busqueda-productos" placeholder="Buscar productos..." class="busqueda-input" />
-    <input type="text" id="busqueda-productos" placeholder="Buscar productos..." class="busqueda-input" />
+  
   `;
   document.querySelector('main')?.prepend(controles);
 
