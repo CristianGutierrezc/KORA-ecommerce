@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('form-perfil');
 
   // Cargar sesión desde cookie
-  const sesion = getCookie('sesionKora');
+  const sesion = getCookie('usuario');
   const user = sesion ? JSON.parse(sesion) : null;
 
   // Precargar valores si hay usuario
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Guardar en cookie actualizada
-    setCookie('sesionKora', JSON.stringify(usuarioActualizado));
+    setCookie('usuario', JSON.stringify(usuarioActualizado));
     alert('Perfil actualizado correctamente.');
     window.location.href = '../index.html';
   });

@@ -32,13 +32,14 @@
 
   <!-- Controlador principal -->
   <script type="module" src="../js/controllers/eliminar-producto.controller.js"></script>
+  <script type="module" src="../js/utils/darkmode.js"></script>
 
   <!-- Control de sesión y logout -->
   <script type="module">
     import { getCookie, borrarCookie } from '../js/utils/cookies.js';
 
     document.addEventListener('DOMContentLoaded', () => {
-      const sesion = getCookie('sesionKora');
+      const sesion = getCookie('usuario');
       const user = sesion ? JSON.parse(sesion) : null;
 
       const nombreSpan = document.getElementById('usuario-nombre');
@@ -56,27 +57,11 @@
       loginLink.style.display = 'none';
 
       cerrarBtn?.addEventListener('click', () => {
-        borrarCookie('sesionKora');
+        borrarCookie('usuario');
         localStorage.removeItem('sesionActiva');
         window.location.href = '../index.html';
       });
     });
   </script>
-<script>
-  const btnModo = document.createElement('button');
-  btnModo.id = 'toggle-dark-mode';
-  btnModo.textContent = document.cookie.includes('modo=oscuro') ? '☀️' : '🌙';
-  document.body.appendChild(btnModo);
-
-  if (document.cookie.includes('modo=oscuro')) {
-    document.body.classList.add('modo-oscuro');
-  }
-
-  btnModo.addEventListener('click', () => {
-    const isDark = document.body.classList.toggle('modo-oscuro');
-    document.cookie = `modo=${isDark ? 'oscuro' : 'claro'};path=/`;
-    btnModo.textContent = isDark ? '☀️' : '🌙';
-  });
-</script>
 </body>
 </html>

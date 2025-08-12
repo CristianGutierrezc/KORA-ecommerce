@@ -5,7 +5,7 @@ import { getCookie } from '../utils/cookies.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // ⚙️ Verificar sesión de administrador
-  const sesion = getCookie('sesionKora');
+  const sesion = getCookie('usuario');
   const user = sesion ? JSON.parse(sesion) : null;
 
   if (!user || user.rol !== 'admin') {

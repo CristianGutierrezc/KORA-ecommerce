@@ -15,6 +15,17 @@ export function loginUsuario(email, password) {
   return usuarios.find(u => u.email === email && u.password === password) || null;
 }
 
+// Valida credenciales y permite acceso al admin por defecto
+export function validarCredenciales(email, password) {
+  const usuario = loginUsuario(email, password);
+  if (usuario) return usuario;
+
+  if (email === 'admin@kora.com' && password === '1234') {
+    return { nombre: 'Admin', email, password, rol: 'admin' };
+  }
+  return null;
+}
+
 // Devuelve todos los usuarios registrados
 export function obtenerUsuarios() {
   return JSON.parse(localStorage.getItem(CLAVE_USUARIOS)) || [];
