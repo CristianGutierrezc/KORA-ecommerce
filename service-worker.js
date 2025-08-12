@@ -7,6 +7,7 @@ const urlsToCache = [
   '/js/controllers/carrito.controller.js',
   '/js/utils/fnStorages.js',
   '/js/utils/cookies.js',
+  '/js/utils/darkmode.js',
   '/js/utils/validaciones.js',
   '/manifest.json',
   '/img/logo_kora.png',

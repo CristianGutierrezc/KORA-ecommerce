@@ -63,6 +63,7 @@
   <!-- CONTROLADOR DE FUNCIONALIDAD -->
   <script type="module" src="../js/controllers/dashboard.controller.js"></script>
   <script type="module" src="../js/utils/cookies.js"></script>
+  <script type="module" src="../js/utils/darkmode.js"></script>
 
   <!-- CONTROL DE SESIÓN PARA ADMIN -->
   <script type="module">
@@ -110,21 +111,5 @@
       adminMenu.classList.remove('activo');
     });
   </script>
-<script>
-  const btnModo = document.createElement('button');
-  btnModo.id = 'toggle-dark-mode';
-  btnModo.textContent = document.cookie.includes('modo=oscuro') ? '☀️' : '🌙';
-  document.body.appendChild(btnModo);
-
-  if (document.cookie.includes('modo=oscuro')) {
-    document.body.classList.add('modo-oscuro');
-  }
-
-  btnModo.addEventListener('click', () => {
-    const isDark = document.body.classList.toggle('modo-oscuro');
-    document.cookie = `modo=${isDark ? 'oscuro' : 'claro'};path=/`;
-    btnModo.textContent = isDark ? '☀️' : '🌙';
-  });
-</script>
 </body>
 </html>

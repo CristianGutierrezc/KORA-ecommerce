@@ -3,7 +3,7 @@ import { getCookie } from '../utils/cookies.js';
 import { validarProducto } from '../utils/validarProducto.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const sesion = getCookie('sesionKora');
+  const sesion = getCookie('usuario');
   const user = sesion ? JSON.parse(sesion) : null;
 
   if (!user || user.rol !== 'admin') {

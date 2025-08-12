@@ -33,6 +33,7 @@
 
   <!-- Script del controlador del carrito -->
   <script type="module" src="../js/controllers/carrito.controller.js"></script>
+  <script type="module" src="../js/utils/darkmode.js"></script>
 
   <!-- Script adicional para finalizar compra -->
   <script>
@@ -46,23 +47,6 @@
     });
   </script>
 
-  <!-- Botón modo oscuro flotante con cookie -->
-  <script>
-    const btnModo = document.createElement('button');
-    btnModo.id = 'toggle-dark-mode';
-    btnModo.textContent = document.cookie.includes('modo=oscuro') ? '☀️' : '🌙';
-    document.body.appendChild(btnModo);
-
-    if (document.cookie.includes('modo=oscuro')) {
-      document.body.classList.add('modo-oscuro');
-    }
-
-    btnModo.addEventListener('click', () => {
-      const isDark = document.body.classList.toggle('modo-oscuro');
-      document.cookie = `modo=${isDark ? 'oscuro' : 'claro'};path=/`;
-      btnModo.textContent = isDark ? '☀️' : '🌙';
-    });
-  </script>
 
 </body>
 </html>
